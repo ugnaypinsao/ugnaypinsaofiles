@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin File and Image Upload</title>
+    <link rel="stylesheet" href="../css/admin_document.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Admin Panel: Upload Files and Images</h1>
+        <form id="file-upload-form">
+            <label for="file">Select File or Image to Upload:</label>
+            <input type="file" id="file" accept="image/*,.pdf,.doc,.docx" required>
+            <button type="submit">Upload</button>
+        </form>
+        <h2>Uploaded Files and Images</h2>
+        <div id="file-list"></div>
+    </div>
+
+    <script src="../js/admin_document.js"></script>
+</body>
+
+</html>

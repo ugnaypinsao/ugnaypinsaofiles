@@ -1,0 +1,109 @@
+/* General styles */
+body {
+    background-color: #1f381a; 
+    color: #f0f6f0; 
+    font-family: 'Poppins', sans-serif; 
+    margin: 0;
+    padding: 0;
+    line-height: 1.8;
+}
+
+/* Headings */
+h1 {
+    color: #ffffff; 
+    text-align: center;
+    margin: 40px 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+h2 {
+    color: #e9ffe2; 
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 500;
+}
+
+/* Containers */
+.viewer-section {
+    margin: 20px auto;
+    max-width: 800px;
+    padding: 30px;
+    background-color: #284d25; 
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    color: #dff7e0; 
+}
+
+/* Announcement cards */
+.announcement {
+    border: 1px solid #cccccc; 
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 10px;
+    background-color: #eef7e2; 
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    color: #333333; 
+}
+
+.announcement img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.announcement h3 {
+    color: #31620e; 
+    text-align: center; 
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.announcement p {
+    color: #555555; 
+    font-size: 1.1rem;
+    margin-bottom: 0;
+}
+
+/* Links */
+a {
+    color: #31620e; 
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #4e8c4e; 
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .viewer-section {
+        padding: 20px;
+    }
+
+    .announcement {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    .announcement h3 {
+        font-size: 1.3rem;
+    }
+
+    .announcement p {
+        font-size: 1rem;
+    }
+}
