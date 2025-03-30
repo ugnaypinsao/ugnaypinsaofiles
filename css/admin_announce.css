@@ -7,10 +7,11 @@ body {
     color: #333;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    height: 100vh; 
+    align-items: center;
     flex-direction: column; 
-    padding-top: 20px; 
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 /* Headings */
@@ -40,12 +41,12 @@ h2 {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px; 
+    margin-bottom: 40px;
 }
 
 /* Form group */
 .form-group {
-    margin-bottom: 20px;
-    margin-right: 20px;
+    margin-bottom: 15px;
 }
 
 label {
@@ -61,7 +62,7 @@ input, textarea {
     padding: 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-size: 1rem;
     color: #333;
     background-color: #fafafa;
@@ -85,11 +86,13 @@ button {
     color: #ffffff;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    margin-top: 10px;
 }
 
 button:hover {
     background-color: #4CAF50; 
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 button:active {
@@ -108,17 +111,47 @@ button:active {
     color: #333;
 }
 
+.announcement h3 {
+    margin-top: 0;
+    color: #31620e;
+}
+
+.announcement-details {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f1f8e9;
+    border-radius: 5px;
+}
+
+.announcement-details p {
+    margin: 5px 0;
+}
+
 /* Admin actions styling */
 .admin-actions {
     text-align: right;
+    margin-top: 15px;
 }
 
 .admin-actions button {
-    background-color: #f44336;
+    width: auto;
     margin-left: 10px;
+    padding: 8px 15px;
 }
 
-.admin-actions button:hover {
+.admin-actions button:first-child {
+    background-color: #ff9800;
+}
+
+.admin-actions button:first-child:hover {
+    background-color: #f57c00;
+}
+
+.admin-actions button:last-child {
+    background-color: #f44336;
+}
+
+.admin-actions button:last-child:hover {
     background-color: #d32f2f;
 }
 
@@ -134,15 +167,5 @@ button:active {
 
     h2 {
         font-size: 1.5rem;
-    }
-
-    input, textarea {
-        padding: 12px; 
-        font-size: 1rem; 
-    }
-
-    button {
-        padding: 12px 20px;
-        font-size: 1rem;
     }
 }

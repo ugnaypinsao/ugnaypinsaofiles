@@ -17,5 +17,36 @@
 
 <script src="../js/res_announce.js"></script>
 
+<!-- Edit Announcement Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Announcement</h2>
+        <form id="editForm">
+            <div class="form-group">
+                <label for="editTitle">Title</label>
+                <input type="text" id="editTitle" required>
+            </div>
+            <div class="form-group">
+                <label for="editWhat">What</label>
+                <input type="text" id="editWhat" required>
+            </div>
+            <div class="form-group">
+                <label for="editWhere">Where</label>
+                <input type="text" id="editWhere" required>
+            </div>
+            <div class="form-group">
+                <label for="editWhen">When</label>
+                <input type="datetime-local" id="editWhen" required>
+            </div>
+            <div class="form-group">
+                <label for="editContent">Additional Details</label>
+                <textarea id="editContent" rows="5"></textarea>
+            </div>
+            <button type="button" onclick="saveEditedAnnouncement()">Save Changes</button>
+        </form>
+    </div>
+</div>
+
 </body>
 </html>
