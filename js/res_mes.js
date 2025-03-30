@@ -18,7 +18,7 @@ function sendMessage() {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `secret=6LfsRfcqAAAAAOkg5nxKxppbpHUn5KO7KDZwYAup&response=${captchaResponse}`,
+        body: `secret=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe&response=${captchaResponse}`,
     })
     .then(response => response.json())
     .then(data => {
