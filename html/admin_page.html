@@ -1,87 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../css/admin_page.css">
-    <title>Admin Panel</title>
 </head>
-
 <body>
-    <div class="side-menu">
-        <div class="brand-name">
-            <h2>Admin</h2>
-        </div>
-        <ul>
-            <li>
-                <a href="admin_announce.html">
-                    <img src="announcement.png" alt="">&nbsp; <span>Announcement</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin_mes.html">
-                    <img src="inbox.png" alt="">&nbsp;<span>Inbox</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin_sched.html">
-                    <img src="calendar.png" alt="">&nbsp;<span>Calendar</span>
-                </a>
-            </li>
-            <li>
-                <a href="admin_document.html">
-                    <img src="documents.png" alt="">&nbsp;<span>Documents</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <div class="container">
-        <div class="header">
-            <div class="nav">
-                <div class="search">
-                    <input type="text" placeholder="Search..">
-                    <button type="submit"><img src="search.png" alt=""></button>
-                </div>
-                <div class="user">
-                    <a href="#" class="btn">Add New</a>
-                </div>
-            </div>
-        </div>
-        <div class="content">
-            <div class="cards">
-                <div class="card">
-                    <div class="box">
-                        <h3>Add Data</h3>
-                    </div>
-                    <div class="icon-case">
-                        <a href="purok1.html">
-                        <img src="#" alt=""></a>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="box">
-                        <h3>Barangay Data</h3>
-                    </div>
-                    <div class="icon-case">
-                        <a href="purok1.html">
-                        <img src="#" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="box">
-                        <h3>Edit Data</h3>
-                    </div>
-                    <div class="icon-case">
-                        <img src="#" alt="">
-                    </div>
-                </div>
-            </div>
+    <div class="main-content">
+        <h1>Welcome, Admin</h1>
+        <nav class="button-container">
+            <a href="add_data.php" class="button" target="_self">➕ Add Data</a>
+            <a href="barangay_data.php" class="button" target="_self">🏠 Barangay Data</a>
+            <a href="admin_announce.html" class="button" target="_self">📢 Announcement</a>
+            <a href="admin_mes.html" class="button" target="_self">📩 Inbox</a>
+            <a href="admin_sched.html" class="button" target="_self">📅 Calendar</a>
+            <a href="admin_document.html" class="button" target="_self">📂 Documents</a>
+        </nav>
+        <div class="activity">
+            <p><strong>Last Activity:</strong> <span id="last-activity">No recent activity</span></p>
+            <p><strong>Date & Time:</strong> <span id="last-activity-time">N/A</span></p>
         </div>
     </div>
-    </div>
-</body>
+    <script>
+        // Update last activity dynamically (Example)
+document.addEventListener("DOMContentLoaded", function () {
+    let lastActivity = localStorage.getItem("lastActivity") || "No recent activity";
+    let lastActivityTime = localStorage.getItem("lastActivityTime") || "N/A";
+    document.getElementById("last-activity").textContent = lastActivity;
+    document.getElementById("last-activity-time").textContent = lastActivityTime;
 
+    // Simulate updating activity (replace with real logic)
+    document.querySelectorAll(".button").forEach(button => {
+        button.addEventListener("click", function () {
+            localStorage.setItem("lastActivity", this.textContent.trim());
+            localStorage.setItem("lastActivityTime", new Date().toLocaleString());
+        });
+    });
+});
+    </script>
+    <script src="../js/admin_page"></script>
+</body>
 </html>
