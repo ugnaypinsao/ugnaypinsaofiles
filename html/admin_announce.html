@@ -43,14 +43,19 @@
     <div id="adminAnnouncements"></div>
 </div>
 
-<!-- Edit Announcement Popup -->
-<div id="editPopup" class="popup-container">
-    <div class="popup-content">
-        <div class="popup-header">
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-box">
+        <div class="modal-header">
             <h2>Edit Announcement</h2>
-            <span class="close-btn" onclick="closeEditPopup()">&times;</span>
+            <button class="close-btn" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
-        <div class="popup-body">
+        <div class="modal-body">
             <form id="editForm">
                 <div class="form-group">
                     <label for="editTitle">Title</label>
@@ -73,12 +78,13 @@
                     <textarea id="editContent" rows="5"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Current Image</label>
-                    <div id="currentImageContainer"></div>
-                    <label for="editImage">Change Image</label>
+                    <label for="editImage">Upload New Image</label>
                     <input type="file" id="editImage" accept="image/*">
                 </div>
-                <button type="button" class="save-btn" onclick="saveEditedAnnouncement()">Save Changes</button>
+                <div class="modal-footer">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="button" class="save-btn" onclick="saveEditedAnnouncement()">Save Changes</button>
+                </div>
             </form>
         </div>
     </div>

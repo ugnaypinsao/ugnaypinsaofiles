@@ -1,6 +1,6 @@
 /* General styles */
 body {
-    font-family: 'Poppins', sans-serif; 
+    font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
@@ -8,43 +8,26 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; 
+    flex-direction: column;
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
 }
 
-/* Headings */
-h1 {
-    text-align: center;
-    color: #31620e; 
-    font-weight: 600;
-    font-size: 2.5rem;
-    margin: 40px 0 20px 0; 
-    width: 100%;
-}
-
-h2 {
-    text-align: center;
-    color: #4CAF50; 
-    margin-bottom: 30px;
-    font-size: 1.8rem;
-}
-
-/* Admin section container */
+/* Admin section styles */
 .admin-section {
-    margin: 0 auto; 
+    margin: 0 auto;
     width: 100%;
     max-width: 600px;
     padding: 30px;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 20px; 
+    margin-top: 20px;
     margin-bottom: 40px;
 }
 
-/* Form group */
+/* Form styles */
 .form-group {
     margin-bottom: 15px;
 }
@@ -56,7 +39,6 @@ label {
     color: #333;
 }
 
-/* Input and textarea styling */
 input, textarea {
     width: 100%;
     padding: 12px;
@@ -70,45 +52,38 @@ input, textarea {
 }
 
 input:focus, textarea:focus {
-    border-color: #31620e; 
+    border-color: #31620e;
     background-color: #ffffff;
     outline: none;
 }
 
-/* Buttons styling */
 button {
     padding: 12px 20px;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     border: none;
-    background-color: #31620e; 
+    background-color: #31620e;
     color: #ffffff;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
     width: 100%;
     margin-top: 10px;
 }
 
 button:hover {
-    background-color: #4CAF50; 
+    background-color: #4CAF50;
     transform: scale(1.02);
-}
-
-button:active {
-    background-color: #45a049;
-    transform: scale(0.98);
 }
 
 /* Announcement styling */
 .announcement {
     padding: 20px;
     margin: 20px 0;
-    background-color: #e8f5e9; 
-    border: 1px solid #c8e6c9; 
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    color: #333;
 }
 
 .announcement h3 {
@@ -127,7 +102,6 @@ button:active {
     margin: 5px 0;
 }
 
-/* Admin actions styling */
 .admin-actions {
     text-align: right;
     margin-top: 15px;
@@ -155,17 +129,130 @@ button:active {
     background-color: #d32f2f;
 }
 
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #31620e;
+    font-size: 1.5rem;
+}
+
+.close-btn {
+    background-color: #f44336;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.close-btn:hover {
+    background-color: #d32f2f;
+    transform: scale(1.1);
+}
+
+.close-btn svg {
+    stroke: white;
+    width: 20px;
+    height: 20px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #eee;
+}
+
+.cancel-btn {
+    background-color: #f44336;
+}
+
+.save-btn {
+    background-color: #31620e;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
-    .admin-section {
-        padding: 20px;
+    .modal-box {
+        width: 95%;
     }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer button {
+        width: 100%;
+    }
+    
+    .close-btn {
+        width: 36px;
+        height: 36px;
+    }
+}
 
-    h1 {
-        font-size: 2rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
+.content-container {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f1f8e9;
+    border-radius: 5px;
 }

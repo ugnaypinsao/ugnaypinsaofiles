@@ -10,13 +10,19 @@ function renderAnnouncements() {
         const viewerCard = document.createElement('div');
         viewerCard.className = 'announcement';
 
-        const formattedDate = new Date(announcement.date).toLocaleString(); // Format date and time
+        const formattedDate = new Date(announcement.date).toLocaleString();
+        const eventDate = new Date(announcement.when).toLocaleString();
 
         viewerCard.innerHTML = `
             ${announcement.image ? `<img src="${announcement.image}" alt="Announcement Image">` : ''}
             <h3>${announcement.title}</h3>
-            <p>${announcement.content}</p>
-            <small>Posted on: ${formattedDate}</small>
+            <div class="announcement-details">
+                <p><strong>What:</strong> ${announcement.what}</p>
+                <p><strong>Where:</strong> ${announcement.where}</p>
+                <p><strong>When:</strong> ${eventDate}</p>
+            </div>
+            ${announcement.content ? `<div class="announcement-content">${announcement.content}</div>` : ''}
+            <div class="announcement-date">Posted on: ${formattedDate}</div>
         `;
         viewerDiv.appendChild(viewerCard);
     });

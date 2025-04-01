@@ -55,18 +55,24 @@ function renderAnnouncements() {
                 <p><strong>Where:</strong> ${announcement.where}</p>
                 <p><strong>When:</strong> ${eventDate}</p>
             </div>
-            ${announcement.content ? `<p>${announcement.content}</p>` : ''}
+            ${announcement.content ? `<div class="content-container"></div>` : ''}
             <small>Posted on: ${formattedDate}</small>
             <div class="admin-actions">
-                <button onclick="openEditPopup(${announcement.id})">Edit</button>
+                <button onclick="editAnnouncement(${announcement.id})">Edit</button>
                 <button onclick="deleteAnnouncement(${announcement.id})">Delete</button>
             </div>
         `;
+        
+        if (announcement.content) {
+            const contentContainer = adminCard.querySelector('.content-container');
+            contentContainer.textContent = announcement.content;
+        }
+        
         adminDiv.appendChild(adminCard);
     });
 }
 
-function openEditPopup(id) {
+function editAnnouncement(id) {
     const announcement = announcements.find(ann => ann.id === id);
     if (!announcement) return;
 
@@ -77,14 +83,9 @@ function openEditPopup(id) {
     document.getElementById('editWhere').value = announcement.where;
     document.getElementById('editWhen').value = announcement.when;
     document.getElementById('editContent').value = announcement.content || '';
+    document.getElementById('editImage').value = '';
     
-    const imageContainer = document.getElementById('currentImageContainer');
-    imageContainer.innerHTML = '';
-    if (announcement.image) {
-        imageContainer.innerHTML = `<img src="${announcement.image}" alt="Current Image">`;
-    }
-    
-    document.getElementById('editPopup').style.display = 'flex';
+    document.getElementById('editModal').style.display = 'flex';
 }
 
 function saveEditedAnnouncement() {
@@ -110,13 +111,14 @@ function saveEditedAnnouncement() {
         announcement.when = when;
         announcement.content = content;
         
+        // Only update image if a new one was selected
         if (imageInput.files[0]) {
             announcement.image = URL.createObjectURL(imageInput.files[0]);
         }
         
         saveAnnouncements();
         renderAnnouncements();
-        closeEditPopup();
+        closeModal();
     }
 }
 
@@ -141,19 +143,19 @@ function clearForm() {
     document.getElementById('content').value = '';
 }
 
-function closeEditPopup() {
-    document.getElementById('editPopup').style.display = 'none';
+function closeModal() {
+    document.getElementById('editModal').style.display = 'none';
     currentEditId = null;
     document.getElementById('editImage').value = '';
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', renderAnnouncements);
-
-// Close popup when clicking outside content
+// Event listeners
+document.querySelector('.close-btn').addEventListener('click', closeModal);
 window.addEventListener('click', function(event) {
-    const popup = document.getElementById('editPopup');
-    if (event.target === popup) {
-        closeEditPopup();
+    if (event.target === document.getElementById('editModal')) {
+        closeModal();
     }
 });
+
+// Initialize
+document.addEventListener('DOMContentLoaded', renderAnnouncements);
