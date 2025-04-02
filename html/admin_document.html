@@ -1,26 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin File and Image Upload</title>
     <link rel="stylesheet" href="../css/admin_document.css">
 </head>
-
 <body>
     <div class="container">
         <h1>Admin Panel: Upload Files and Images</h1>
         <form id="file-upload-form">
+            <label for="title">Document Title:</label>
+            <input type="text" id="title" placeholder="Enter document title" required>
+            
             <label for="file">Select File or Image to Upload:</label>
             <input type="file" id="file" accept="image/*,.pdf,.doc,.docx" required>
             <button type="submit">Upload</button>
         </form>
+        
         <h2>Uploaded Files and Images</h2>
         <div id="file-list"></div>
     </div>
 
-    <script src="../js/admin_document.js"></script>
-</body>
+    <script>
+        const fileList = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
 
+        function displayFiles() {
+            const fileListContainer = document.getElementById('file-list');
+            fileListContainer.innerHTML = '';
+
+            fileList.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                if (file.type.startsWith('image/')) {
+                    fileItem.innerHTML = `
+                        <h3>${file.title}</h3>
+                        <img src="${file.url}" alt="${file.name}" class="file-preview">
+                        <p>${file.name}</p>
+                        <button onclick="deleteFile(${index})">Delete</button>
+                    `;
+                } else {
+                    fileItem.innerHTML = `
+                        <h3>${file.title}</h3>
+                        <p>${file.name}</p>
+                        <a href="${file.url}" download>Download</a>
+                        <button onclick="deleteFile(${index})">Delete</button>
+                    `;
+                }
+                fileListContainer.appendChild(fileItem);
+            });
+        }
+
+        document.getElementById('file-upload-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('file');
+            const titleInput = document.getElementById('title');
+            const file = fileInput.files[0];
+            const title = titleInput.value.trim();
+
+            if (file && title) {
+                const fileURL = URL.createObjectURL(file);
+                fileList.push({ name: file.name, url: fileURL, type: file.type, title: title });
+                localStorage.setItem('uploadedFiles', JSON.stringify(fileList));
+                fileInput.value = ''; // Reset input
+                titleInput.value = ''; // Reset title input
+                displayFiles();
+            } else {
+                alert('Please enter a title and select a file to upload.');
+            }
+        });
+
+        function deleteFile(index) {
+            fileList.splice(index, 1);
+            localStorage.setItem('uploadedFiles', JSON.stringify(fileList));
+            displayFiles();
+        }
+
+        // Display existing files on page load
+        displayFiles();
+    </script>
+</body>
 </html>

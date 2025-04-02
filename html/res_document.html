@@ -1,19 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident File Access</title>
     <link rel="stylesheet" href="../css/res_document.css">
+    <style>
+        #searchBar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        #searchBar:focus {
+            outline: none;
+            border-color: #2E7D32;
+            box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
+        }
+    </style>
 </head>
-
 <body>
     <div class="container">
         <h1>Available Forms</h1>
+        <input type="text" id="searchBar" placeholder="Search documents..." onkeyup="filterFiles()">
         <div id="file-list"></div>
     </div>
-    <script src="../js/res_document.js"></script>
-</body>
 
+    <script>
+        const fileList = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+
+        function displayFiles(filteredFiles = fileList) {
+            const fileListContainer = document.getElementById('file-list');
+            fileListContainer.innerHTML = '';
+
+            if (filteredFiles.length === 0) {
+                fileListContainer.innerHTML = '<p>No files available.</p>';
+            } else {
+                filteredFiles.sort((a, b) => a.name.localeCompare(b.name)); // Sort files alphabetically
+                
+                filteredFiles.forEach((file) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.innerHTML = `
+                        <h3>${file.title || 'Untitled Document'}</h3>
+                        <p>${file.name}</p>
+                        <a href="${file.url}" target="_blank" download>Download</a>
+                        <button onclick="printFile('${file.url}')">Print</button>
+                    `;
+                    fileListContainer.appendChild(fileItem);
+                });
+            }
+        }
+
+        function filterFiles() {
+            const searchInput = document.getElementById('searchBar').value.toLowerCase();
+            const filteredFiles = fileList.filter(file => file.name.toLowerCase().includes(searchInput) || (file.title && file.title.toLowerCase().includes(searchInput)));
+            displayFiles(filteredFiles);
+        }
+
+        function printFile(url) {
+            const printWindow = window.open(url, '_blank');
+            printWindow.addEventListener('load', () => {
+                printWindow.print();
+            });
+        }
+
+        // Display files on page load
+        displayFiles();
+    </script>
+</body>
 </html>
