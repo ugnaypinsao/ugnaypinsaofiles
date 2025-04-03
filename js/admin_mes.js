@@ -106,6 +106,43 @@ function deleteMessage() {
     }
 }
 
+function replyViaEmail() {
+    if (!currentMessage) return;
+    
+    // Extract email and name from the message
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+    const senderEmail = currentMessage.from.match(emailRegex);
+    const senderName = currentMessage.from.replace(emailRegex, '').trim() || "Valued Customer";
+    
+    if (!senderEmail) {
+        alert("No valid email address found for this sender.");
+        return;
+    }
+    
+    // Create the email template
+    const emailBody = `
+Dear ${senderName},
+
+Thank you for your message.
+
+Regarding your inquiry:
+${currentMessage.text}
+
+[Please type your reply here]
+
+Best regards,
+Pinsao Secretary
+`.trim();
+    
+    // Create a mailto link
+    const subject = encodeURIComponent("Re: Your Message");
+    const body = encodeURIComponent(emailBody);
+    const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${senderEmail[0]}&su=${subject}&body=${body}`;
+    
+    // Open Gmail compose window
+    window.open(mailtoLink, '_blank');
+}
+
 // Load messages on page load
 loadMessages();
 

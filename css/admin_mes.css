@@ -63,6 +63,7 @@ body {
 .message-item p {
     color: #666; 
     font-size: 0.95rem;
+    margin: 5px 0;
 }
 
 /* Message Detail */
@@ -71,6 +72,7 @@ body {
     padding: 20px;
     background-color: #f9f9f9; 
     display: none; 
+    overflow-y: auto;
 }
 
 .message-detail h3 {
@@ -82,77 +84,19 @@ body {
 .message-detail p {
     font-size: 1rem;
     line-height: 1.6;
-    color: #555; 
-}
-
-/* Footer Section */
-.inbox-footer {
-    padding: 12px;
-    background-color: #f7f7f7; 
-    border-top: 1px solid #e0e0e0; 
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-.inbox-footer button {
-    padding: 10px 20px;
-    background-color: #28a745; 
-    color: #ffffff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.inbox-footer button:hover {
-    background-color: #218838; 
-    transform: scale(1.05); 
-}
-
-.inbox-footer button:active {
-    background-color: #1e7e34; 
-    transform: scale(0.98); 
-}
-/* Add these styles to your existing CSS */
-
-.message-item.unread {
-    background-color: #e3f2fd; /* Light blue background for unread messages */
-}
-
-.message-item .message-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-}
-
-.message-item .message-info span {
-    font-weight: 600;
-    color: #4a4a4a;
-}
-
-.message-item .message-info .message-date {
-    font-size: 0.85rem;
-    color: #888;
-}
-
-.message-item p {
-    color: #666;
-    font-size: 0.95rem;
-    margin: 0;
+    color: #555;
+    white-space: pre-wrap;
 }
 
 /* Unread message style */
 .message-item.unread {
     font-weight: bold;
-    background-color: #c0d8ee; /* Light blue background for unread messages */
+    background-color: #e3f2fd;
 }
 
 /* Unread mark (dot) */
 .unread-mark {
-    color: #ff0000; /* Red dot for unread messages */
+    color: #ff0000;
     font-size: 1.2rem;
     margin-left: 10px;
 }
@@ -170,6 +114,7 @@ small {
     display: flex;
     gap: 10px;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
 .detail-buttons button {
@@ -179,15 +124,22 @@ small {
     cursor: pointer;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    flex: 1;
+    min-width: 120px;
 }
 
 .detail-buttons button:first-child {
-    background-color: #6c7c88; /* Back to Inbox button */
+    background-color: #6c7c88;
     color: #ffffff;
 }
 
-.detail-buttons button:last-child {
-    background-color: #dc3545; /* Delete button */
+.detail-buttons .reply-button {
+    background-color: #4285F4;
+    color: #ffffff;
+}
+
+.detail-buttons .delete-button {
+    background-color: #dc3545;
     color: #ffffff;
 }
 
@@ -197,4 +149,29 @@ small {
 
 .detail-buttons button:active {
     transform: scale(0.98);
+}
+
+/* Message info styling */
+.message-item .message-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.message-item .message-info span {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+.message-item .message-info .message-date {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Empty state */
+.empty-inbox {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
 }
