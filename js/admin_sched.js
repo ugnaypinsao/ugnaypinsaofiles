@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.removeChild(modal);
             const reason = prompt('Please enter the reason for cancellation:');
             if (reason !== null) {
-                sendEmail(booking.email, 'Booking Cancelled', 
+                sendGmail(booking.email, 'Booking Cancelled', 
                     `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been cancelled.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
                 updateBooking(booking.id, 'cancelled');
             }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Add action listeners
                 bookingEl.querySelector('.accept-btn').addEventListener('click', () => {
                     if (isTimeSlotAvailable(booking.date, booking.time)) {
-                        sendEmail(booking.email, 'Booking Accepted', 
+                        sendGmail(booking.email, 'Booking Accepted', 
                             `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been accepted.\n\nLooking forward to seeing you!\n\nBest regards,\n[Your Business Name]`);
                         updateBooking(booking.id, 'accepted');
                     } else {
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             return;
                         }
                         
-                        sendEmail(booking.email, 'Booking Rescheduled', 
+                        sendGmail(booking.email, 'Booking Rescheduled', 
                             `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`);
                         
                         const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 bookingEl.querySelector('.reject-btn').addEventListener('click', () => {
                     const reason = prompt('Please enter the reason for rejection:');
                     if (reason !== null) {
-                        sendEmail(booking.email, 'Booking Rejected', 
+                        sendGmail(booking.email, 'Booking Rejected', 
                             `Dear ${booking.name},\n\nWe regret to inform you that your booking request for ${booking.date} at ${booking.time} has been rejected.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
                         updateBooking(booking.id, 'rejected');
                     }
@@ -182,10 +182,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Function to open email client with pre-filled message
-    function sendEmail(email, subject, body) {
-        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        window.open(mailtoLink, '_blank');
+    // Function to open Gmail compose window with properly formatted messages
+    function sendGmail(to, subject, body) {
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}&ui=2&tf=1`;
+        window.open(gmailUrl, '_blank', 'width=800,height=600');
     }
 
     // Check if time slot is available (with 30-minute buffer)
