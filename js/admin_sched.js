@@ -1,13 +1,83 @@
 document.addEventListener('DOMContentLoaded', function () {
     const calendarEl = document.getElementById('calendar');
     const pendingRequestsEl = document.getElementById('pending-requests');
-    const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_WEB_APP_URL'; // Replace with your deployed Google Apps Script URL
 
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         events: [],
+        eventClick: function(info) {
+            showBookingDetails(info.event);
+        }
     });
     calendar.render();
+
+    // Function to show booking details in a modal
+    function showBookingDetails(event) {
+        const booking = getBookingByEvent(event);
+        if (!booking) return;
+
+        const modal = document.createElement('div');
+        modal.className = 'booking-modal';
+        modal.innerHTML = `
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Booking Details</h2>
+                <div class="booking-info">
+                    <p><strong>Name:</strong> ${booking.name}</p>
+                    <p><strong>Email:</strong> ${booking.email}</p>
+                    <p><strong>Date:</strong> ${booking.date}</p>
+                    <p><strong>Time:</strong> ${booking.time}</p>
+                    <p><strong>Details:</strong> ${booking.details}</p>
+                    <p><strong>Status:</strong> ${booking.status}</p>
+                    <p><strong>Request Sent:</strong> ${new Date(booking.requestDateTime).toLocaleString()}</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="reschedule-event-btn">Reschedule</button>
+                    <button class="cancel-event-btn">Cancel Booking</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Close modal when clicking X
+        modal.querySelector('.close-modal').addEventListener('click', () => {
+            document.body.removeChild(modal);
+        });
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                document.body.removeChild(modal);
+            }
+        });
+
+        // Add action buttons
+        modal.querySelector('.reschedule-event-btn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            rescheduleBooking(booking);
+        });
+
+        modal.querySelector('.cancel-event-btn').addEventListener('click', () => {
+            document.body.removeChild(modal);
+            const reason = prompt('Please enter the reason for cancellation:');
+            if (reason !== null) {
+                sendEmail(booking.email, 'Booking Cancelled', 
+                    `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been cancelled.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
+                updateBooking(booking.id, 'cancelled');
+            }
+        });
+    }
+
+    // Helper function to find booking by event
+    function getBookingByEvent(event) {
+        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+        return bookings.find(b => 
+            b.name === event.title && 
+            b.date === event.startStr.split('T')[0] && 
+            b.time === event.startStr.split('T')[1].substring(0, 5)
+        );
+    }
 
     // Load bookings from localStorage
     function loadBookings() {
@@ -48,41 +118,81 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
 
                 // Add action listeners
-                bookingEl.querySelector('.accept-btn').addEventListener('click', async () => {
+                bookingEl.querySelector('.accept-btn').addEventListener('click', () => {
                     if (isTimeSlotAvailable(booking.date, booking.time)) {
-                        await updateBooking(booking.id, 'accepted');
+                        sendEmail(booking.email, 'Booking Accepted', 
+                            `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been accepted.\n\nLooking forward to seeing you!\n\nBest regards,\n[Your Business Name]`);
+                        updateBooking(booking.id, 'accepted');
                     } else {
                         alert('This time slot is already booked or conflicts with another appointment. Please choose a different time or reschedule.');
                     }
                 });
-                bookingEl.querySelector('.reschedule-btn').addEventListener('click', () => rescheduleBooking(booking));
-                bookingEl.querySelector('.reject-btn').addEventListener('click', async () => {
-                    await updateBooking(booking.id, 'rejected');
+                
+                bookingEl.querySelector('.reschedule-btn').addEventListener('click', () => {
+                    const newDate = prompt('Enter new date (YYYY-MM-DD):', booking.date);
+                    const newTime = prompt('Enter new time (HH:MM):', booking.time);
+                    
+                    if (newDate && newTime) {
+                        if (!isTimeSlotAvailable(newDate, newTime)) {
+                            alert('This time slot is already booked or conflicts with another appointment. Please choose a different time.');
+                            return;
+                        }
+                        
+                        sendEmail(booking.email, 'Booking Rescheduled', 
+                            `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`);
+                        
+                        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                        const updatedBookings = bookings.map((b) => {
+                            if (b.id === booking.id) {
+                                return { ...b, date: newDate, time: newTime };
+                            }
+                            return b;
+                        });
+                        localStorage.setItem('bookings', JSON.stringify(updatedBookings));
+                        loadBookings();
+                    }
+                });
+                
+                bookingEl.querySelector('.reject-btn').addEventListener('click', () => {
+                    const reason = prompt('Please enter the reason for rejection:');
+                    if (reason !== null) {
+                        sendEmail(booking.email, 'Booking Rejected', 
+                            `Dear ${booking.name},\n\nWe regret to inform you that your booking request for ${booking.date} at ${booking.time} has been rejected.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
+                        updateBooking(booking.id, 'rejected');
+                    }
                 });
 
                 pendingRequestsEl.appendChild(bookingEl);
             });
 
         // Add accepted events to calendar
-        calendar.removeAllEvents(); // Clear existing events first
+        calendar.removeAllEvents();
         bookings.forEach((booking) => {
             if (booking.status === 'accepted') {
                 calendar.addEvent({
                     title: booking.name,
                     start: `${booking.date}T${booking.time}`,
                     extendedProps: {
-                        duration: 30 // Assuming each booking is 30 minutes
+                        email: booking.email,
+                        details: booking.details,
+                        requestDateTime: booking.requestDateTime
                     }
                 });
             }
         });
     }
 
+    // Function to open email client with pre-filled message
+    function sendEmail(email, subject, body) {
+        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoLink, '_blank');
+    }
+
     // Check if time slot is available (with 30-minute buffer)
     function isTimeSlotAvailable(date, time) {
         const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const selectedDateTime = new Date(`${date}T${time}`);
-        const selectedEndTime = new Date(selectedDateTime.getTime() + 30 * 60000); // Add 30 minutes
+        const selectedEndTime = new Date(selectedDateTime.getTime() + 30 * 60000);
         
         // Check against all accepted bookings
         const conflicts = bookings.filter(booking => {
@@ -120,8 +230,8 @@ document.addEventListener('DOMContentLoaded', function () {
         loadBookings();
     }
 
-    // Update booking status and send email
-    async function updateBooking(id, status) {
+    // Update booking status
+    function updateBooking(id, status) {
         const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const updatedBookings = bookings.map((b) => {
             if (b.id === id) {
@@ -130,106 +240,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return b;
         });
         localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-        
-        // Send email notification
-        const booking = bookings.find(b => b.id === id);
-        if (booking) {
-            await sendNotificationEmail(booking, status);
-        }
-        
         loadBookings();
     }
 
-    // Reschedule booking and send email
-    async function rescheduleBooking(booking) {
-        const newDate = prompt('Enter new date (YYYY-MM-DD):', booking.date);
-        const newTime = prompt('Enter new time (HH:MM):', booking.time);
-        
-        if (newDate && newTime) {
-            if (!isTimeSlotAvailable(newDate, newTime)) {
-                alert('This time slot is already booked or conflicts with another appointment. Please choose a different time.');
-                return;
-            }
-            
-            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            const updatedBookings = bookings.map((b) => {
-                if (b.id === booking.id) {
-                    return { ...b, date: newDate, time: newTime };
-                }
-                return b;
-            });
-            localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-            
-            // Send email notification
-            const updatedBooking = { ...booking, date: newDate, time: newTime };
-            await sendNotificationEmail(updatedBooking, 'rescheduled');
-            
-            loadBookings();
-        }
-    }
-
-    // Send email notification via Google Apps Script
-    async function sendNotificationEmail(booking, action) {
-        let subject, body;
-        
-        switch(action) {
-            case 'accepted':
-                subject = `Appointment Confirmed - ${booking.date} at ${booking.time}`;
-                body = `
-                    <h2>Your appointment has been confirmed!</h2>
-                    <p>Dear ${booking.name},</p>
-                    <p>We're pleased to confirm your appointment on ${booking.date} at ${booking.time}.</p>
-                    <p>Details: ${booking.details}</p>
-                    <p>Thank you!</p>
-                `;
-                break;
-                
-            case 'rejected':
-                subject = `Appointment Declined - ${booking.date} at ${booking.time}`;
-                body = `
-                    <h2>Your appointment request has been declined</h2>
-                    <p>Dear ${booking.name},</p>
-                    <p>We regret to inform you that your appointment request for ${booking.date} at ${booking.time} cannot be accommodated.</p>
-                    <p>Please contact us if you'd like to reschedule.</p>
-                    <p>Thank you for your understanding.</p>
-                `;
-                break;
-                
-            case 'rescheduled':
-                subject = `Appointment Rescheduled - ${booking.date} at ${booking.time}`;
-                body = `
-                    <h2>Your appointment has been rescheduled</h2>
-                    <p>Dear ${booking.name},</p>
-                    <p>Your appointment has been rescheduled to ${booking.date} at ${booking.time}.</p>
-                    <p>Details: ${booking.details}</p>
-                    <p>Please contact us if you need to make any changes.</p>
-                `;
-                break;
-        }
-        
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    recipientEmail: booking.email,
-                    subject: subject,
-                    body: body
-                })
-            });
-            
-            const result = await response.json();
-            if (!result.success) {
-                console.error('Email sending failed:', result.error);
-                alert('Failed to send notification email. Please notify the client manually.');
-            }
-        } catch (error) {
-            console.error('Error sending email:', error);
-            alert('Error sending notification email. Please notify the client manually.');
-        }
-    }
-
-    loadBookings(); // Initial load
+    loadBookings();
 });

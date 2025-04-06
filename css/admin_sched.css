@@ -1,8 +1,8 @@
 /* General Styles */
 body {
-    background-color: #f9f9f9; 
-    color: #4a4a4a; 
-    font-family: 'Inter', sans-serif; 
+    background-color: #f9f9f9;
+    color: #4a4a4a;
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     line-height: 1.6;
@@ -12,15 +12,15 @@ body {
 .container {
     margin: 40px auto;
     max-width: 900px;
-    background-color: #ffffff; 
+    background-color: #ffffff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05); 
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 /* Headings */
 h1, h2 {
-    color: #2e3b2d; 
+    color: #2e3b2d;
     font-weight: 600;
     text-align: center;
     margin-bottom: 20px;
@@ -32,13 +32,13 @@ h1 {
 
 h2 {
     font-size: 1.7rem;
-    color: #5e8d56; 
+    color: #5e8d56;
 }
 
 /* Calendar */
 #calendar {
     margin-top: 30px;
-    background-color: #e0f1e0; 
+    background-color: #e0f1e0;
     border-radius: 10px;
     padding: 20px;
     color: #333;
@@ -48,19 +48,19 @@ h2 {
 
 /* Booking Items */
 .booking-item {
-    background-color: #ffffff; 
-    color: #4a4a4a; 
-    border: 1px solid #e0e0e0; 
+    background-color: #ffffff;
+    color: #4a4a4a;
+    border: 1px solid #e0e0e0;
     border-radius: 10px;
     padding: 20px;
     margin: 20px 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .booking-item:hover {
-    transform: translateY(-5px); 
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); 
+    transform: translateY(-5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Booking Actions */
@@ -78,13 +78,71 @@ h2 {
 }
 
 .booking-actions button:hover {
-    background-color: #4CAF50; 
-    transform: scale(1.05); 
+    background-color: #4CAF50;
+    transform: scale(1.05);
 }
 
 .booking-actions button:active {
     background-color: #45a049;
     transform: scale(0.98);
+}
+
+/* Modal Styles */
+.booking-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.booking-info {
+    margin: 20px 0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reschedule-event-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.cancel-event-btn {
+    background-color: #f44336;
+    color: white;
 }
 
 /* Responsive Design */
@@ -114,5 +172,9 @@ h2 {
     .booking-actions button {
         font-size: 1rem;
         padding: 10px 20px;
+    }
+    
+    .modal-content {
+        width: 90%;
     }
 }
