@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Business Directory</title>
+    <link rel="stylesheet" href="../css/res_business.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>Local Business Directory</h1>
+        <nav>
+            <a href="../admin/" class="admin-link">Admin Login</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search businesses...">
+            <select id="category-filter">
+                <option value="all">All Categories</option>
+                <option value="food">Food</option>
+                <option value="hardware">Hardware</option>
+                <option value="shops">Shops</option>
+                <option value="services">Services</option>
+            </select>
+        </div>
+        
+        <div id="business-list" class="business-grid"></div>
+    </main>
+
+    <script src="../js/businessStorage.js"></script>
+    <script src="../js/res_business.js"></script>
+</body>
+</html>
