@@ -599,7 +599,7 @@ h6 {
   /* IE6-9 */
 
   position: relative;
-  margin-bottom: 1em;
+  margin-bottom: 5em;
   /*border-radius*/
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -646,7 +646,7 @@ h6 {
 }
 
 .officials img {
-  width: 100%;
+  width: 50%;
   margin-bottom: -9px;
   /*border-radius*/
   -webkit-border-radius: 5px;
@@ -655,7 +655,7 @@ h6 {
 }
 
 .officials:hover img {
-  opacity: .35;
+  opacity: .25;
 }
 
 .overlay {
