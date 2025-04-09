@@ -17,6 +17,7 @@
         <button class="filter-btn" data-filter="unresolved">Unresolved</button>
         <button class="filter-btn" data-filter="in-progress">In Progress</button>
         <button class="filter-btn" data-filter="resolved">Resolved</button>
+        <button class="filter-btn" id="viewArchiveBtn">View Archive</button>
       </div>
     </div>
     <div class="message-list" id="messageList">
@@ -34,6 +35,18 @@
       </div>
     </div>
   </div>
+  
+  <!-- Archive Modal -->
+  <div class="modal" id="archiveModal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeArchiveModal()">&times;</span>
+      <h2>Archived Messages</h2>
+      <div class="archive-list" id="archiveList">
+        <!-- Archived messages will be displayed here -->
+      </div>
+    </div>
+  </div>
+  
   <script src="../js/admin_mes.js"></script>
 </body>
 
