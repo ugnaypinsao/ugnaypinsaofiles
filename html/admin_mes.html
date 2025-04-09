@@ -10,7 +10,15 @@
 
 <body>
   <div class="inbox-container">
-    <div class="inbox-header">Admin Inbox</div>
+    <div class="inbox-header">
+      <div>Admin Inbox</div>
+      <div class="filter-options">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="unresolved">Unresolved</button>
+        <button class="filter-btn" data-filter="in-progress">In Progress</button>
+        <button class="filter-btn" data-filter="resolved">Resolved</button>
+      </div>
+    </div>
     <div class="message-list" id="messageList">
       <!-- Messages will be dynamically added here -->
     </div>
@@ -18,6 +26,7 @@
       <h3 id="messageSender"></h3>
       <p id="messageText"></p>
       <small id="messageTimestamp"></small>
+      <div class="message-status" id="messageStatus"></div>
       <div class="detail-buttons">
         <button onclick="closeDetail()">Back to Inbox</button>
         <button onclick="replyViaEmail()" class="reply-button">Reply via Email</button>

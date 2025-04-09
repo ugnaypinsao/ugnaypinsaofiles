@@ -48,6 +48,7 @@ body {
     border-bottom: 1px solid #f0f0f0;
     cursor: pointer;
     transition: background 0.3s ease;
+    position: relative;
 }
 
 .message-item:hover {
@@ -174,4 +175,124 @@ small {
     text-align: center;
     padding: 40px 20px;
     color: #888;
+}
+
+/* Status buttons */
+.status-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.status-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.status-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.status-btn.unresolved {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.status-btn.in-progress {
+    background-color: #fff8e1;
+    color: #f57f17;
+}
+
+.status-btn.resolved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Message status display */
+.message-status {
+    margin: 15px 0;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.message-status.unresolved {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+.message-status.in-progress {
+    background-color: #fff8e1;
+    color: #f57f17;
+    border-left: 4px solid #f57f17;
+}
+
+.message-status.resolved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+/* Status highlights */
+.message-item.unresolved {
+    border-left: 4px solid #c62828;
+}
+
+.message-item.in-progress {
+    border-left: 4px solid #f57f17;
+}
+
+.message-item.resolved {
+    border-left: 4px solid #2e7d32;
+}
+
+/* Filter controls */
+.filter-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.filter-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.filter-btn.active {
+    background-color: #6c7c88;
+    color: white;
+}
+
+/* Adjust inbox header for filter controls */
+.inbox-header {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.inbox-header > div:first-child {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
 }
