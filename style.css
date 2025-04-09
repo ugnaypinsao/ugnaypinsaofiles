@@ -815,6 +815,64 @@ address i {
 
 /* Form, Comments and Contact */
 
+/* Contact Form Input Styling */
+input:not([type=submit]):not([type=file]),
+textarea {
+  width: 100% !important;
+  height: 50px;
+  margin-bottom: 25px;
+  padding: 0 15px 2px;
+  border: 2px solid #ebebeb;
+  border-radius: 6px;
+  background: white;
+  box-shadow: 0px 0px 0px 2px transparent;
+  transition: box-shadow 0.3s;
+  color: #777777; /* Normal text color */
+}
+
+/* Placeholder text styling */
+input:not([type=submit]):not([type=file])::placeholder,
+textarea::placeholder {
+  color: #e04b4b; /* Red color for placeholder */
+  opacity: 1; /* Full opacity */
+}
+
+/* Focus states */
+input:not([type=submit]):not([type=file]):focus,
+textarea:focus {
+  border-color: #32620E;
+  outline: none;
+  color: #777777; /* Normal text color when focused */
+}
+
+/* Textarea specific styles */
+textarea {
+  max-width: 100%;
+  min-height: 150px;
+  padding: 15px;
+}
+
+/* Submit button */
+.submit {
+  font-size: 1.1em;
+  position: relative;
+  width: 190px;
+  height: 45px;
+  margin-bottom: 2em;
+  padding: 0;
+  cursor: pointer;
+  vertical-align: top;
+  border: 0;
+  float: right;
+  background: #32620E;
+  color: white;
+  border-radius: 30px;
+}
+
+.submit:hover {
+  background: #53852c;
+}
+
 
 .comments,
 .form {
@@ -1232,3 +1290,6 @@ only screen and (max-width: 480px) {
     margin: 0 auto 10px auto;
     line-height: 18px;
   }
+}
+
+  
