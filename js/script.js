@@ -19,22 +19,20 @@ const auth = getAuth(app);
 
 // Add event listener to the form
 const form = document.querySelector('.login');
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent form from submitting traditionally
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-            const user = userCredential.user;
-            alert("Login successful");
-            // Redirect to admin page
-            window.location.href = "../html/admin_page.html";
-        })
-        .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            alert(`Error: ${errorMessage}`);
-        });
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // If login is successful, redirect to the 2FA page
+        window.location.href = "../html/2fa.html"; // Redirect to 2FA page
+    } catch (error) {
+        const errorMessage = error.message;
+        alert(`Error: ${errorMessage}`); // Show error message if login fails
+    }
 });
