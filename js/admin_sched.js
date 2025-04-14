@@ -11,11 +11,15 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="summary-tabs">
             <button class="tab-btn active" data-tab="accepted">Accepted (0)</button>
             <button class="tab-btn" data-tab="rejected">Rejected (0)</button>
+            <button class="tab-btn" data-tab="rescheduled">Rescheduled (0)</button>
         </div>
         <div id="accepted-summary" class="summary-content active">
             <ul class="summary-list"></ul>
         </div>
         <div id="rejected-summary" class="summary-content">
+            <ul class="summary-list"></ul>
+        </div>
+        <div id="rescheduled-summary" class="summary-content">
             <ul class="summary-list"></ul>
         </div>
     `;
@@ -25,7 +29,21 @@ document.addEventListener('DOMContentLoaded', function () {
         initialView: 'dayGridMonth',
         events: [],
         eventClick: function(info) {
-            showBookingDetails(info.event);
+            // Get the full booking data from localStorage
+            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+            const booking = bookings.find(b => 
+                b.name === info.event.extendedProps.name && 
+                b.date === info.event.startStr.split('T')[0] && 
+                b.time === info.event.startStr.split('T')[1].substring(0, 5) &&
+                b.status === 'accepted'
+            );
+            
+            if (booking) {
+                showBookingDetails(booking);
+            } else {
+                console.error('Booking not found');
+            }
+            info.jsEvent.preventDefault();
         }
     });
     calendar.render();
@@ -57,12 +75,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p><strong>Details:</strong> ${booking.details}</p>
                     <p><strong>Status:</strong> ${booking.status}</p>
                     ${booking.reason ? `<p><strong>Reason:</strong> ${booking.reason}</p>` : ''}
+                    ${booking.rescheduleReason ? `<p><strong>Reschedule Reason:</strong> ${booking.rescheduleReason}</p>` : ''}
+                    ${booking.originalDate ? `<p><strong>Originally Scheduled:</strong> ${booking.originalDate} at ${booking.originalTime}</p>` : ''}
                     <p><strong>Request Sent:</strong> ${new Date(booking.requestDateTime).toLocaleString()}</p>
                 </div>
-                ${booking.status === 'accepted' ? `
+                ${booking.status === 'accepted' || booking.status === 'rescheduled' ? `
                 <div class="modal-actions">
                     <button class="reschedule-event-btn">Reschedule</button>
-                    <button class="cancel-event-btn">Cancel Booking</button>
+                    <button class="cancel-event-btn">${booking.status === 'rescheduled' ? 'Cancel Rescheduled Booking' : 'Cancel Booking'}</button>
                 </div>
                 ` : ''}
             </div>
@@ -80,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        if (booking.status === 'accepted') {
+        if (booking.status === 'accepted' || booking.status === 'rescheduled') {
             modal.querySelector('.reschedule-event-btn').addEventListener('click', () => {
                 document.body.removeChild(modal);
                 rescheduleBooking(booking);
@@ -98,26 +118,27 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Helper function to find booking by event
-    function getBookingByEvent(event) {
-        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-        return bookings.find(b => 
-            b.name === event.title && 
-            b.date === event.startStr.split('T')[0] && 
-            b.time === event.startStr.split('T')[1].substring(0, 5)
-        );
-    }
-
     // Create summary list item
     function createSummaryListItem(booking) {
         const li = document.createElement('li');
         li.className = `summary-item ${booking.status}`;
+        
+        let statusText = booking.status;
+        if (booking.status === 'rescheduled') {
+            statusText = 'Rescheduled';
+        }
+        
         li.innerHTML = `
             <div class="summary-item-header">
                 <span class="booking-name">${booking.name}</span>
                 <span class="booking-date">${booking.date} at ${booking.time}</span>
-                <span class="status-badge ${booking.status}">${booking.status}</span>
+                <span class="status-badge ${booking.status}">${statusText}</span>
             </div>
+            ${booking.status === 'rescheduled' && booking.originalDate ? `
+            <div class="rescheduled-info">
+                <small>Originally: ${booking.originalDate} at ${booking.originalTime}</small>
+            </div>
+            ` : ''}
         `;
         
         li.addEventListener('click', () => {
@@ -142,12 +163,14 @@ document.addEventListener('DOMContentLoaded', function () {
         pendingRequestsEl.innerHTML = '';
         document.querySelectorAll('.summary-list').forEach(list => list.innerHTML = '');
 
-        // Count accepted/rejected for tabs
+        // Count appointments for tabs
         const acceptedCount = bookings.filter(b => b.status === 'accepted').length;
         const rejectedCount = bookings.filter(b => b.status === 'rejected').length;
+        const rescheduledCount = bookings.filter(b => b.status === 'rescheduled').length;
         
         document.querySelector('[data-tab="accepted"]').textContent = `Accepted (${acceptedCount})`;
         document.querySelector('[data-tab="rejected"]').textContent = `Rejected (${rejectedCount})`;
+        document.querySelector('[data-tab="rescheduled"]').textContent = `Rescheduled (${rescheduledCount})`;
 
         // Sort all bookings by date (newest first)
         bookings.sort((a, b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time));
@@ -187,20 +210,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 bookingEl.querySelector('.reschedule-btn').addEventListener('click', () => {
                     const newDate = prompt('Enter new date (YYYY-MM-DD):', booking.date);
                     const newTime = prompt('Enter new time (HH:MM):', booking.time);
+                    const reason = prompt('Please enter the reason for rescheduling:');
                     
-                    if (newDate && newTime) {
+                    if (newDate && newTime && reason) {
                         if (!isTimeSlotAvailable(newDate, newTime)) {
                             alert('This time slot is already booked or conflicts with another appointment. Please choose a different time.');
                             return;
                         }
                         
-                        sendGmail(booking.email, 'Booking Rescheduled', 
-                            `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`);
+                        // Auto-open email for rescheduling
+                        const emailBody = `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nReason: ${reason}\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`;
+                        sendGmail(booking.email, 'Booking Rescheduled', emailBody);
                         
                         const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
                         const updatedBookings = bookings.map((b) => {
                             if (b.id === booking.id) {
-                                return { ...b, date: newDate, time: newTime };
+                                return { 
+                                    ...b, 
+                                    date: newDate, 
+                                    time: newTime,
+                                    originalDate: b.date,
+                                    originalTime: b.time,
+                                    rescheduleReason: reason,
+                                    status: 'rescheduled'
+                                };
                             }
                             return b;
                         });
@@ -212,8 +245,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 bookingEl.querySelector('.reject-btn').addEventListener('click', () => {
                     const reason = prompt('Please enter the reason for rejection:');
                     if (reason !== null) {
-                        sendGmail(booking.email, 'Booking Rejected', 
-                            `Dear ${booking.name},\n\nWe regret to inform you that your booking request for ${booking.date} at ${booking.time} has been rejected.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
+                        // Auto-open email for rejection
+                        const emailBody = `Dear ${booking.name},\n\nWe regret to inform you that your booking request for ${booking.date} at ${booking.time} has been rejected.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`;
+                        sendGmail(booking.email, 'Booking Rejected', emailBody);
+                        
                         updateBooking(booking.id, 'rejected', reason);
                     }
                 });
@@ -221,31 +256,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 pendingRequestsEl.appendChild(bookingEl);
             });
 
-        // Process accepted and rejected bookings for summary
+        // Process accepted, rejected and rescheduled bookings for summary
         const acceptedList = document.querySelector('#accepted-summary .summary-list');
         const rejectedList = document.querySelector('#rejected-summary .summary-list');
+        const rescheduledList = document.querySelector('#rescheduled-summary .summary-list');
+        
+        // Clear calendar before adding events
+        calendar.removeAllEvents();
         
         bookings.forEach((booking) => {
-            if (booking.status === 'accepted' || booking.status === 'rejected') {
+            if (['accepted', 'rejected', 'rescheduled'].includes(booking.status)) {
                 const listItem = createSummaryListItem(booking);
                 
                 if (booking.status === 'accepted') {
                     acceptedList.appendChild(listItem);
                 } else if (booking.status === 'rejected') {
                     rejectedList.appendChild(listItem);
+                } else if (booking.status === 'rescheduled') {
+                    rescheduledList.appendChild(listItem);
                 }
             }
 
-            // Add to calendar if accepted
+            // Only add to calendar if accepted
             if (booking.status === 'accepted') {
                 calendar.addEvent({
-                    title: booking.name,
+                    title: 'Booked',
                     start: `${booking.date}T${booking.time}`,
                     extendedProps: {
+                        name: booking.name,
                         email: booking.email,
                         details: booking.details,
                         requestDateTime: booking.requestDateTime,
-                        reason: booking.reason || ''
+                        reason: booking.reason || '',
+                        rescheduleReason: booking.rescheduleReason || '',
+                        originalDate: booking.originalDate || '',
+                        originalTime: booking.originalTime || ''
                     }
                 });
             }
@@ -265,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedEndTime = new Date(selectedDateTime.getTime() + 30 * 60000);
         
         const conflicts = bookings.filter(booking => {
-            if (booking.status !== 'accepted') return false;
+            if (booking.status !== 'accepted' && booking.status !== 'rescheduled') return false;
             
             const bookingDateTime = new Date(`${booking.date}T${booking.time}`);
             const bookingEndTime = new Date(bookingDateTime.getTime() + 30 * 60000);
@@ -298,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loadBookings();
     }
 
-    // Update booking status (now includes reason parameter)
+    // Update booking status
     function updateBooking(id, status, reason = '') {
         const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
         const updatedBookings = bookings.map((b) => {
@@ -315,20 +360,30 @@ document.addEventListener('DOMContentLoaded', function () {
     function rescheduleBooking(booking) {
         const newDate = prompt('Enter new date (YYYY-MM-DD):', booking.date);
         const newTime = prompt('Enter new time (HH:MM):', booking.time);
+        const reason = prompt('Please enter the reason for rescheduling:');
         
-        if (newDate && newTime) {
+        if (newDate && newTime && reason) {
             if (!isTimeSlotAvailable(newDate, newTime)) {
                 alert('This time slot is already booked or conflicts with another appointment. Please choose a different time.');
                 return;
             }
             
-            sendGmail(booking.email, 'Booking Rescheduled', 
-                `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`);
+            // Auto-open email for rescheduling
+            const emailBody = `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nReason: ${reason}\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`;
+            sendGmail(booking.email, 'Booking Rescheduled', emailBody);
             
             const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             const updatedBookings = bookings.map((b) => {
                 if (b.id === booking.id) {
-                    return { ...b, date: newDate, time: newTime };
+                    return { 
+                        ...b, 
+                        date: newDate, 
+                        time: newTime,
+                        originalDate: b.originalDate || b.date,
+                        originalTime: b.originalTime || b.time,
+                        rescheduleReason: reason,
+                        status: 'rescheduled'
+                    };
                 }
                 return b;
             });

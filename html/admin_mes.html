@@ -14,10 +14,10 @@
       <div>Admin Inbox</div>
       <div class="filter-options">
         <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="unread">Unread</button>
         <button class="filter-btn" data-filter="unresolved">Unresolved</button>
         <button class="filter-btn" data-filter="in-progress">In Progress</button>
         <button class="filter-btn" data-filter="resolved">Resolved</button>
-        <button class="filter-btn" id="viewArchiveBtn">View Archive</button>
       </div>
     </div>
     <div class="message-list" id="messageList">
@@ -31,22 +31,24 @@
       <div class="detail-buttons">
         <button onclick="closeDetail()">Back to Inbox</button>
         <button onclick="replyViaEmail()" class="reply-button">Reply via Email</button>
-        <button onclick="deleteMessage()" class="delete-button">Delete Message</button>
+        <button onclick="showDeleteDialog()" class="delete-button">Delete Message</button>
       </div>
     </div>
   </div>
-  
-  <!-- Archive Modal -->
-  <div class="modal" id="archiveModal">
+
+  <!-- Delete Confirmation Dialog -->
+  <div class="modal" id="deleteModal">
     <div class="modal-content">
-      <span class="close-btn" onclick="closeArchiveModal()">&times;</span>
-      <h2>Archived Messages</h2>
-      <div class="archive-list" id="archiveList">
-        <!-- Archived messages will be displayed here -->
+      <h3>Delete Message</h3>
+      <p>Please provide a reason for deleting this message:</p>
+      <textarea id="deleteReason" placeholder="Enter reason for deletion..." rows="4"></textarea>
+      <div class="modal-buttons">
+        <button onclick="confirmDelete()" class="confirm-btn">Confirm Delete</button>
+        <button onclick="cancelDelete()" class="cancel-btn">Cancel</button>
       </div>
     </div>
   </div>
-  
+
   <script src="../js/admin_mes.js"></script>
 </body>
 

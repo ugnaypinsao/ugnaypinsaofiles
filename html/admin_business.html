@@ -11,7 +11,7 @@
     <header>
         <h1>Business Directory Admin</h1>
         <nav>
-            <a href="../residents/" class="view-site-link">View Public Site</a>
+            <a href="../res_business.html" class="view-site-link">View Public Site</a>
             <button id="logout-btn">Logout</button>
         </nav>
     </header>
@@ -23,7 +23,6 @@
         
         <div id="admin-business-list" class="business-grid"></div>
         
-        <!-- Add/Edit Business Modal -->
         <div id="business-modal" class="modal">
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
@@ -31,20 +30,59 @@
                 <form id="business-form">
                     <input type="hidden" id="business-id">
                     <div class="form-group">
+                        <label for="ownerName">Business Owner Name *</label>
+                        <input type="text" id="ownerName" required>
+                    </div>
+                    <div class="form-group">
                         <label for="name">Business Name *</label>
                         <input type="text" id="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="description">Description *</label>
-                        <textarea id="description" rows="3" required></textarea>
+                        <label for="description">Description</label>
+                        <textarea id="description" rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="category">Category *</label>
                         <select id="category" required>
-                            <option value="food">Food</option>
-                            <option value="hardware">Hardware</option>
-                            <option value="shops">Shops</option>
-                            <option value="services">Services</option>
+                            <option value="eatery">Eatery</option>
+                            <option value="retail">Retail</option>
+                            <option value="cafe">Cafe/Coffee Shop</option>
+                            <option value="catering">Catering</option>
+                            <option value="convenience">Convenience Store</option>
+                            <option value="eloading">E-loading</option>
+                            <option value="dealer">Dealer</option>
+                            <option value="minimart">Minimart</option>
+                            <option value="water_delivery">Water Delivery</option>
+                            <option value="water_refilling">Water Refilling</option>
+                            <option value="messengerial">Messengerial</option>
+                            <option value="aggregates">Aggregates</option>
+                            <option value="auto_detailing">Auto Detailing</option>
+                            <option value="tailoring">Tailoring</option>
+                            <option value="laundry">Laundry</option>
+                            <option value="woodwork">Woodwork</option>
+                            <option value="printing">Printing and Publication</option>
+                            <option value="construction">Construction Services</option>
+                            <option value="lpg">Distributor of LPG</option>
+                            <option value="internet">Internet</option>
+                            <option value="concrete">Installation of Concrete</option>
+                            <option value="manufacture">Manufacture</option>
+                            <option value="credit_coop">Credit Cooperative</option>
+                            <option value="buy_sell">Buy and Sell</option>
+                            <option value="bookkeeping">Book Keeping</option>
+                            <option value="english_tutor">English Tutor</option>
+                            <option value="pvc">Installation of PVC</option>
+                            <option value="gasoline">Gasoline</option>
+                            <option value="architectural">Architectural Design</option>
+                            <option value="drygoods">Wholesale of Drygoods</option>
+                            <option value="art_galleries">Art Galleries</option>
+                            <option value="apartment">Apartment</option>
+                            <option value="salon">Salon</option>
+                            <option value="transient">Transient</option>
+                            <option value="boarding_house">Boarding House</option>
+                            <option value="real_estate">Real Estate</option>
+                            <option value="sub_lessor">Sub Lessor</option>
+                            <option value="hotel_motel">Hotel/Motel</option>
+                            <option value="boarding">Boarding</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -52,12 +90,12 @@
                         <input type="text" id="address" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Phone *</label>
-                        <input type="tel" id="phone" required>
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone">
                     </div>
                     <div class="form-group">
-                        <label for="hours">Operating Hours *</label>
-                        <input type="text" id="hours" placeholder="e.g. 9AM-5PM Mon-Fri" required>
+                        <label for="hours">Operating Hours</label>
+                        <input type="text" id="hours" placeholder="e.g. 9AM-5PM Mon-Fri">
                     </div>
                     <div class="form-group">
                         <label for="image">Business Image</label>

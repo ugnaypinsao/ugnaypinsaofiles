@@ -358,6 +358,7 @@ $(document).ready(function () {
 		});
 	}
 
+
 	var zoomControlDiv = document.createElement('div');
 	var zoomControl = new CustomZoomControl(zoomControlDiv, map);
 
@@ -365,3 +366,6 @@ $(document).ready(function () {
 	map.controls[google.maps.ControlPosition.LEFT_TOP].push(zoomControlDiv);
 
 });
+
+
+

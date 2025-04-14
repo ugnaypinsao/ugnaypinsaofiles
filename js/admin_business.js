@@ -23,12 +23,11 @@ document.addEventListener('DOMContentLoaded', function() {
     imageInput.addEventListener('change', handleImagePreview);
     removeImageBtn.addEventListener('click', removeImage);
     businessForm.addEventListener('submit', handleFormSubmit);
-    logoutBtn.addEventListener('click', () => window.location.href = '../residents/');
+    logoutBtn.addEventListener('click', () => window.location.href = '../res_business.html');
 
     // Initial render
     renderAdminBusinessList();
 
-    // Functions
     function renderAdminBusinessList() {
         adminBusinessList.innerHTML = '';
         const businesses = BusinessStorage.getBusinesses();
@@ -47,18 +46,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const card = document.createElement('div');
         card.className = 'business-card';
         
-        const categoryLabel = business.category.charAt(0).toUpperCase() + business.category.slice(1);
+        // Format category name by replacing underscores and capitalizing
+        const formattedCategory = business.category
+            .replace(/_/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+        
         const imageUrl = business.image || 'https://via.placeholder.com/300x200?text=No+Image';
+        const phoneDisplay = business.phone || 'Not provided';
+        const hoursDisplay = business.hours || 'Not specified';
         
         card.innerHTML = `
             <img src="${imageUrl}" alt="${business.name}" class="business-image">
             <div class="business-info">
                 <h3>${business.name}</h3>
-                <span class="category">${categoryLabel}</span>
-                <p>${business.description}</p>
+                <p><strong>Owner:</strong> ${business.ownerName}</p>
+                <span class="category">${formattedCategory}</span>
+                ${business.description ? `<p>${business.description}</p>` : ''}
                 <p><i class="fas fa-map-marker-alt"></i> ${business.address}</p>
-                <p class="contact"><i class="fas fa-phone"></i> ${business.phone}</p>
-                <p><i class="fas fa-clock"></i> ${business.hours}</p>
+                <p class="contact"><i class="fas fa-phone"></i> ${phoneDisplay}</p>
+                <p><i class="fas fa-clock"></i> ${hoursDisplay}</p>
                 <div class="admin-actions">
                     <button class="edit-btn" data-id="${business.id}">Edit</button>
                     <button class="delete-btn" data-id="${business.id}">Delete</button>
@@ -88,12 +94,13 @@ document.addEventListener('DOMContentLoaded', function() {
         
         modalTitle.textContent = 'Edit Business';
         document.getElementById('business-id').value = business.id;
+        document.getElementById('ownerName').value = business.ownerName;
         document.getElementById('name').value = business.name;
-        document.getElementById('description').value = business.description;
+        document.getElementById('description').value = business.description || '';
         document.getElementById('category').value = business.category;
         document.getElementById('address').value = business.address;
-        document.getElementById('phone').value = business.phone;
-        document.getElementById('hours').value = business.hours;
+        document.getElementById('phone').value = business.phone || '';
+        document.getElementById('hours').value = business.hours || '';
         
         currentImageUrl = business.image || '';
         isNewImageSelected = false;
@@ -156,29 +163,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function saveBusiness() {
         const id = document.getElementById('business-id').value;
+        const ownerName = document.getElementById('ownerName').value.trim();
         const name = document.getElementById('name').value.trim();
-        const description = document.getElementById('description').value.trim();
+        const description = document.getElementById('description').value.trim() || null;
         const category = document.getElementById('category').value;
         const address = document.getElementById('address').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const hours = document.getElementById('hours').value.trim();
+        const phone = document.getElementById('phone').value.trim() || null;
+        const hours = document.getElementById('hours').value.trim() || null;
 
-        if (!name || !description || !address || !phone || !hours) {
+        if (!ownerName || !name || !address) {
             alert('Please fill in all required fields');
             return;
         }
 
-        // Determine image to use
         let image = '';
         if (isNewImageSelected) {
-            // Use the new image if one was selected
             image = imagePreview.src || '';
         } else {
-            // Otherwise keep the existing image (if editing)
             image = currentImageUrl || '';
         }
 
-        const businessData = { name, description, category, address, phone, hours, image };
+        const businessData = { 
+            ownerName,
+            name, 
+            description, 
+            category, 
+            address, 
+            phone, 
+            hours, 
+            image 
+        };
 
         try {
             if (id) {
@@ -187,7 +201,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 BusinessStorage.addBusiness(businessData);
             }
 
+            // Trigger storage event to update resident view
             window.dispatchEvent(new Event('storage'));
+            
             closeModal();
             renderAdminBusinessList();
         } catch (error) {
@@ -199,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function deleteBusiness(id) {
         if (confirm('Are you sure you want to delete this business?')) {
             BusinessStorage.deleteBusiness(id);
+            // Trigger storage event to update resident view
             window.dispatchEvent(new Event('storage'));
             renderAdminBusinessList();
         }

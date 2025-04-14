@@ -1,6 +1,5 @@
 let currentMessage = null; // Store the currently viewed message
 let currentFilter = 'all'; // Store the current filter
-let isViewingArchive = false; // Track if we're viewing archive
 
 function loadMessages() {
     const messages = JSON.parse(localStorage.getItem("messages")) || [];
@@ -9,11 +8,6 @@ function loadMessages() {
 
     // Hide detail view by default
     messageDetail.style.display = "none";
-
-    if (isViewingArchive) {
-        loadArchiveMessages();
-        return;
-    }
 
     if (messages.length === 0) {
         messageList.innerHTML = "<div class='empty-inbox'><p>No messages yet.</p></div>";
@@ -27,7 +21,11 @@ function loadMessages() {
 
     let filteredMessages = reversedMessages;
     if (currentFilter !== 'all') {
-        filteredMessages = reversedMessages.filter(msg => msg.status === currentFilter);
+        if (currentFilter === 'unread') {
+            filteredMessages = reversedMessages.filter(msg => !msg.read);
+        } else {
+            filteredMessages = reversedMessages.filter(msg => msg.status === currentFilter);
+        }
     }
 
     if (filteredMessages.length === 0) {
@@ -38,27 +36,6 @@ function loadMessages() {
     filteredMessages.forEach((msg) => {
         const messageItem = createMessageItem(msg);
         messageList.appendChild(messageItem);
-    });
-}
-
-function loadArchiveMessages() {
-    const archive = JSON.parse(localStorage.getItem("messageArchive")) || [];
-    const archiveList = document.getElementById("archiveList");
-    
-    if (archive.length === 0) {
-        archiveList.innerHTML = "<div class='empty-inbox'><p>No archived messages.</p></div>";
-        return;
-    }
-
-    archiveList.innerHTML = ""; // Clear existing archive items
-
-    // Show archive in chronological order (newest first)
-    const reversedArchive = [...archive].reverse();
-
-    reversedArchive.forEach((msg, displayIndex) => {
-        const originalIndex = archive.length - 1 - displayIndex;
-        const archiveItem = createArchiveItem(msg, originalIndex);
-        archiveList.appendChild(archiveItem);
     });
 }
 
@@ -110,90 +87,7 @@ function createMessageItem(msg) {
     return messageItem;
 }
 
-function createArchiveItem(msg, originalIndex) {
-    const archiveItem = document.createElement("div");
-    archiveItem.classList.add("archive-item");
-    
-    // Format the timestamp
-    const formattedTimestamp = msg.timestamp
-        ? new Date(msg.timestamp).toLocaleString()
-        : "Unknown Date";
-
-    const deletedAt = msg.deletedAt ? new Date(msg.deletedAt).toLocaleString() : "Unknown";
-
-    archiveItem.innerHTML = `
-        <div class="archive-item-content">
-            <span><strong>From:</strong> ${msg.from}</span>
-            <p><strong>Message:</strong> ${msg.text}</p>
-            <small><strong>Sent:</strong> ${formattedTimestamp}</small>
-            <small><strong>Deleted:</strong> ${deletedAt}</small>
-        </div>
-        <div class="archive-item-actions">
-            <button class="restore-btn" onclick="restoreMessage(event, ${originalIndex})">Restore</button>
-            <button class="delete-permanently-btn" onclick="deletePermanently(event, ${originalIndex})">Delete Permanently</button>
-        </div>
-    `;
-    
-    return archiveItem;
-}
-
-function openArchiveModal() {
-    isViewingArchive = true;
-    document.getElementById("archiveModal").style.display = "block";
-    loadArchiveMessages();
-}
-
-function closeArchiveModal() {
-    isViewingArchive = false;
-    document.getElementById("archiveModal").style.display = "none";
-    loadMessages();
-}
-
-function restoreMessage(event, originalIndex) {
-    event.stopPropagation();
-    
-    const archive = JSON.parse(localStorage.getItem("messageArchive")) || [];
-    if (originalIndex >= 0 && originalIndex < archive.length) {
-        const messageToRestore = archive[originalIndex];
-        
-        // Add back to messages
-        const messages = JSON.parse(localStorage.getItem("messages")) || [];
-        messages.push(messageToRestore);
-        localStorage.setItem("messages", JSON.stringify(messages));
-        
-        // Remove from archive
-        archive.splice(originalIndex, 1);
-        localStorage.setItem("messageArchive", JSON.stringify(archive));
-        
-        // Reload both views
-        loadArchiveMessages();
-        if (!isViewingArchive) {
-            loadMessages();
-        }
-        
-        // Show success message
-        alert("Message restored successfully!");
-    }
-}
-
-function deletePermanently(event, originalIndex) {
-    event.stopPropagation();
-    
-    if (confirm("Are you sure you want to permanently delete this message? This cannot be undone.")) {
-        const archive = JSON.parse(localStorage.getItem("messageArchive")) || [];
-        if (originalIndex >= 0 && originalIndex < archive.length) {
-            archive.splice(originalIndex, 1);
-            localStorage.setItem("messageArchive", JSON.stringify(archive));
-            loadArchiveMessages();
-            alert("Message permanently deleted!");
-        }
-    }
-}
-
-// ... (rest of the functions remain exactly the same as in the previous version) ...
-
 function setFilter(filter) {
-    isViewingArchive = false;
     currentFilter = filter;
     // Update active button
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -203,7 +97,7 @@ function setFilter(filter) {
 }
 
 function setStatus(event, status) {
-    event.stopPropagation(); // Prevent triggering the message click event
+    event.stopPropagation();
     
     const messageItem = event.target.closest('.message-item');
     const messageText = messageItem.querySelector('p').textContent;
@@ -229,7 +123,7 @@ function setStatus(event, status) {
         }
         
         // If we're filtering and the new status doesn't match the filter, remove the message
-        if (currentFilter !== 'all' && status !== currentFilter) {
+        if (currentFilter !== 'all' && currentFilter !== 'unread' && status !== currentFilter) {
             messageItem.remove();
             
             // Show empty state if no messages left
@@ -255,7 +149,7 @@ function markAsRead(msg) {
     const messages = JSON.parse(localStorage.getItem("messages")) || [];
     const messageIndex = messages.findIndex(m => m.text === msg.text && m.from === msg.from);
     if (messageIndex !== -1) {
-        messages[messageIndex].read = true; // Mark the message as read
+        messages[messageIndex].read = true;
         localStorage.setItem("messages", JSON.stringify(messages));
     }
 }
@@ -270,7 +164,7 @@ function showDetail(msg) {
     // Format the timestamp
     const formattedTimestamp = msg.timestamp
         ? new Date(msg.timestamp).toLocaleString()
-        : "Unknown Date"; // Placeholder if timestamp is missing or invalid
+        : "Unknown Date";
 
     document.getElementById("messageSender").textContent = `From: ${msg.from}`;
     document.getElementById("messageText").textContent = msg.text;
@@ -296,25 +190,38 @@ function closeDetail() {
     loadMessages();
 }
 
-function deleteMessage() {
-    if (!currentMessage) return;
+function showDeleteDialog() {
+    document.getElementById("deleteModal").style.display = "block";
+}
 
-    if (confirm("Are you sure you want to delete this message? It will be moved to archive.")) {
-        const messages = JSON.parse(localStorage.getItem("messages")) || [];
-        const updatedMessages = messages.filter(
-            m => m.text !== currentMessage.text || m.from !== currentMessage.from
-        );
-        
-        // Add to archive
-        const archive = JSON.parse(localStorage.getItem("messageArchive")) || [];
-        currentMessage.deletedAt = new Date().toISOString();
-        archive.push(currentMessage);
-        localStorage.setItem("messageArchive", JSON.stringify(archive));
-        
-        // Update messages
-        localStorage.setItem("messages", JSON.stringify(updatedMessages));
-        closeDetail(); // Return to the inbox after deletion
+function cancelDelete() {
+    document.getElementById("deleteModal").style.display = "none";
+    document.getElementById("deleteReason").value = "";
+}
+
+function confirmDelete() {
+    const reason = document.getElementById("deleteReason").value.trim();
+    if (!reason) {
+        alert("Please provide a reason for deletion");
+        return;
     }
+
+    const messages = JSON.parse(localStorage.getItem("messages")) || [];
+    const updatedMessages = messages.filter(
+        m => m.text !== currentMessage.text || m.from !== currentMessage.from
+    );
+    
+    // Add to archive with deletion reason
+    const archive = JSON.parse(localStorage.getItem("messageArchive")) || [];
+    currentMessage.deletedAt = new Date().toISOString();
+    currentMessage.deleteReason = reason;
+    archive.push(currentMessage);
+    localStorage.setItem("messageArchive", JSON.stringify(archive));
+    
+    // Update messages
+    localStorage.setItem("messages", JSON.stringify(updatedMessages));
+    cancelDelete();
+    closeDetail();
 }
 
 function replyViaEmail() {
@@ -354,6 +261,19 @@ Pinsao Secretary
     window.open(mailtoLink, '_blank');
 }
 
+function checkNewMessages() {
+    const messages = JSON.parse(localStorage.getItem("messages")) || [];
+    const lastMessageCount = localStorage.getItem("lastMessageCount") || 0;
+    
+    // Check if the number of messages has increased
+    if (messages.length > lastMessageCount) {
+        loadMessages();
+        alert("You have new messages!");
+        // Update the last message count
+        localStorage.setItem("lastMessageCount", messages.length);
+    }
+}
+
 // Load messages on page load
 document.addEventListener('DOMContentLoaded', () => {
     // Set up filter button event listeners
@@ -363,22 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // Set up archive button listener
-    document.getElementById("viewArchiveBtn").addEventListener('click', openArchiveModal);
-    
     loadMessages();
     
     // Check for new messages periodically
-    setInterval(() => {
-        const messages = JSON.parse(localStorage.getItem("messages")) || [];
-        const lastMessageCount = localStorage.getItem("lastMessageCount") || 0;
-        
-        // Check if the number of messages has increased
-        if (messages.length > lastMessageCount) {
-            loadMessages();
-            alert("You have new messages!");
-            // Update the last message count
-            localStorage.setItem("lastMessageCount", messages.length);
-        }
-    }, 3000);
+    setInterval(checkNewMessages, 3000);
 });

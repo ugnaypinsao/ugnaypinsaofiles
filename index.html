@@ -346,10 +346,10 @@
                         <div class="info-counter">
                             <div class="info-counter-content">
                                 <h5 class="info-counter-number">
-                                    <span class="counter">119</span>
+                                    <span class="counter">2285</span>
                                     <span class="info-counter-units"></span>
                                 </h5>
-                                <div class="info-counter-text">Local Businesses</div>
+                                <div class="info-counter-text">Number of Household projected 2024</div>
                             </div>
                         </div>
                     </div>
@@ -360,10 +360,10 @@
                         <div class="info-counter">
                             <div class="info-counter-content">
                                 <h5 class="info-counter-number">
-                                    <span class="counter">4,581</span>
-                                    <span class="info-counter-units">feet</span>
+                                    <span class="counter">2251</span>
+                                    <span class="info-counter-units"></span>
                                 </h5>
-                                <div class="info-counter-text">Above Sea Level</div>
+                                <div class="info-counter-text">Number of Families</div>
                             </div>
                         </div>
                     </div>
@@ -402,7 +402,7 @@
 
     <!-- End Parallax Section -->
 
-    <!-- Contact Section -->
+        <!-- Contact Section -->
     <div class="wrap contact" id="contact">
         <div class="grid grid-pad">
             <h2>Contact</h2>
@@ -440,11 +440,18 @@
             <div class="col-1-2 pleft-25">
                 <div class="content contact-form">
                     <form class="form" id="contactForm">
-                        <input type="text" class="comment-name" placeholder="Name*" required id="name">
-                        <input type="email" class="comment-email" placeholder="Email*" required id="email">
-                        <input type="text" class="comment-subject" placeholder="Subject" id="subject">
-                        <textarea class="required comment-text" placeholder="Message..." required
-                            id="message"></textarea>
+                        <label for="name">Name<span class="required-asterisk">*</span></label>
+                        <input type="text" class="comment-name" placeholder=" " required id="name">
+                        
+                        <label for="email">Email<span class="required-asterisk">*</span></label>
+                        <input type="email" class="comment-email" placeholder=" " required id="email">
+                        
+                        <label for="subject">Subject</label>
+                        <input type="text" class="comment-subject" placeholder=" " id="subject">
+                        
+                        <label for="message">Message<span class="required-asterisk">*</span></label>
+                        <textarea class="required comment-text" placeholder=" " required id="message"></textarea>
+                        
                         <input type="submit" value="Send Message" class="btn submit comment-submit">
                     </form>
                 </div>
