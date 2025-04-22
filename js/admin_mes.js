@@ -1,6 +1,19 @@
 let currentMessage = null; // Store the currently viewed message
 let currentFilter = 'all'; // Store the current filter
 
+// New messages popup functions
+function showNewMessagesPopup(count) {
+    const popup = document.getElementById("newMessagesPopup");
+    const countElement = document.getElementById("newMessagesCount");
+    
+    countElement.textContent = `You have ${count} new message${count > 1 ? 's' : ''}!`;
+    popup.style.display = "block";
+}
+
+function closeNewMessagesPopup() {
+    document.getElementById("newMessagesPopup").style.display = "none";
+}
+
 function loadMessages() {
     const messages = JSON.parse(localStorage.getItem("messages")) || [];
     const messageList = document.getElementById("messageList");
@@ -202,7 +215,7 @@ function cancelDelete() {
 function confirmDelete() {
     const reason = document.getElementById("deleteReason").value.trim();
     if (!reason) {
-        alert("Please provide a reason for deletion");
+        showNewMessagesPopup("Please provide a reason for deletion");
         return;
     }
 
@@ -233,7 +246,7 @@ function replyViaEmail() {
     const senderName = currentMessage.from.replace(emailRegex, '').trim() || "Valued Customer";
     
     if (!senderEmail) {
-        alert("No valid email address found for this sender.");
+        showNewMessagesPopup("No valid email address found for this sender");
         return;
     }
     
@@ -263,19 +276,27 @@ Pinsao Secretary
 
 function checkNewMessages() {
     const messages = JSON.parse(localStorage.getItem("messages")) || [];
-    const lastMessageCount = localStorage.getItem("lastMessageCount") || 0;
+    const lastMessageCount = parseInt(localStorage.getItem("lastMessageCount")) || 0;
     
     // Check if the number of messages has increased
     if (messages.length > lastMessageCount) {
-        loadMessages();
-        alert("You have new messages!");
+        const newMessageCount = messages.length - lastMessageCount;
+        showNewMessagesPopup(newMessageCount);
+        
         // Update the last message count
         localStorage.setItem("lastMessageCount", messages.length);
+        
+        // Reload messages to show the new ones
+        loadMessages();
     }
 }
 
 // Load messages on page load
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize last message count
+    const messages = JSON.parse(localStorage.getItem("messages")) || [];
+    localStorage.setItem("lastMessageCount", messages.length);
+    
     // Set up filter button event listeners
     document.querySelectorAll('.filter-btn').forEach(btn => {
         if (btn.dataset.filter) {
@@ -283,8 +304,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Set up popup OK button
+    document.getElementById("popupOkButton").addEventListener("click", closeNewMessagesPopup);
+    
+    // Close popup when clicking outside
+    window.addEventListener("click", function(event) {
+        const popup = document.getElementById("newMessagesPopup");
+        if (event.target === popup) {
+            closeNewMessagesPopup();
+        }
+    });
+    
     loadMessages();
     
     // Check for new messages periodically
-    setInterval(checkNewMessages, 3000);
+    setInterval(checkNewMessages, 5000); // Check every 5 seconds
 });
