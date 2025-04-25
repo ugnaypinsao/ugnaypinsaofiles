@@ -1,14 +1,38 @@
 document.getElementById('booking-form').addEventListener('submit', function (e) {
     e.preventDefault();
 
+    // Get form values
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const details = document.getElementById('details').value;
+
+    // Format date for display
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    // Format time for display
+    const formattedTime = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+
+    // Create booking object
     const booking = {
         id: Date.now(),
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        date: document.getElementById('date').value,
-        time: document.getElementById('time').value,
-        details: document.getElementById('details').value,
-        status: 'pending'
+        name: name,
+        email: email,
+        date: date,
+        time: time,
+        details: details,
+        status: 'pending',
+        createdAt: new Date().toISOString()
     };
 
     // Save to localStorage
@@ -16,28 +40,61 @@ document.getElementById('booking-form').addEventListener('submit', function (e) 
     bookings.push(booking);
     localStorage.setItem('bookings', JSON.stringify(bookings));
 
-    // Show popup instead of alert
-    showPopup('Booking submitted successfully!');
-    this.reset(); // Clear form
+    // Show success modal with details
+    showSuccessModal(
+        `Thank you, ${name}! Your appointment request has been submitted successfully. We've sent a confirmation to ${email}.`,
+        formattedDate,
+        formattedTime
+    );
+
+    // Reset form
+    this.reset();
 });
 
-// Popup functions
-function showPopup(message) {
+function showSuccessModal(message, date, time) {
     const modal = document.getElementById('popup-modal');
     const messageElement = document.getElementById('popup-message');
+    const dateElement = document.getElementById('summary-date');
+    const timeElement = document.getElementById('summary-time');
+
     messageElement.textContent = message;
+    dateElement.textContent = date;
+    timeElement.textContent = time;
+
     modal.style.display = 'block';
+    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
 }
 
-// Close popup when clicking OK button
+// Close modal when clicking OK button
 document.getElementById('ok-button').addEventListener('click', function() {
-    document.getElementById('popup-modal').style.display = 'none';
+    closeModal();
 });
 
-// Close popup when clicking outside
+// Close modal when clicking outside
 window.addEventListener('click', function(event) {
     const modal = document.getElementById('popup-modal');
     if (event.target === modal) {
-        modal.style.display = 'none';
+        closeModal();
     }
+});
+
+function closeModal() {
+    const modal = document.getElementById('popup-modal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; // Re-enable scrolling
+}
+
+// Improve date input UX
+document.getElementById('date').addEventListener('focus', function() {
+    this.type = 'date';
+    if (!this.value) {
+        // Set min date to today
+        const today = new Date().toISOString().split('T')[0];
+        this.min = today;
+    }
+});
+
+// Improve time input UX
+document.getElementById('time').addEventListener('focus', function() {
+    this.type = 'time';
 });

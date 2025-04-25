@@ -3,37 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule</title>
+    <title>Schedule Appointment | Professional Booking System</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="../css/res_sched.css">
 </head>
 <body>
     <div class="container">
-        <h1>Schedule Booking-Appointments</h1>
+        <div class="header">
+            <div class="logo-placeholder">Pinsao Proper</div>
+            <h1>Schedule an Appointment</h1>
+            <p class="subtitle">Fill out the form below to book your consultation</p>
+        </div>
+        
         <form id="booking-form">
-            <label for="name">Your Name:</label>
-            <input type="text" id="name" name="name" required>
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <div class="input-container">
+                    <input type="text" id="name" name="name" required placeholder="John Doe">
+                </div>
+            </div>
 
-            <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-container">
+                    <input type="email" id="email" name="email" required placeholder="john@example.com">
+                </div>
+            </div>
 
-            <label for="details">Details of Request:</label>
-            <textarea id="details" name="details" rows="4" required></textarea>
+            <div class="form-group">
+                <label for="details">Appointment Details</label>
+                <div class="input-container">
+                    <textarea id="details" name="details" rows="4" required placeholder="Please describe the purpose of your appointment"></textarea>
+                </div>
+            </div>
 
-            <label for="calendar">Select Date:</label>
-            <input type="date" id="date" name="date" required>
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="date">Date</label>
+                    <div class="input-container">
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                </div>
+                <div class="form-group half-width">
+                    <label for="time">Time</label>
+                    <div class="input-container">
+                        <input type="time" id="time" name="time" required>
+                    </div>
+                </div>
+            </div>
 
-            <label for="time">Preferred Time:</label>
-            <input type="time" id="time" name="time" required>
-
-            <button type="submit">Submit Booking</button>
+            <div class="form-footer">
+                <button type="submit" class="submit-button">
+                    <span class="button-text">Book Appointment</span>
+                    <span class="button-icon">→</span>
+                </button>
+                <p class="disclaimer">We'll confirm your appointment via email within 24 hours.</p>
+            </div>
         </form>
     </div>
 
-    <!-- Popup Modal -->
+    <!-- Success Modal -->
     <div id="popup-modal" class="modal">
         <div class="modal-content">
-            <p id="popup-message"></p>
-            <button id="ok-button">OK</button>
+            <div class="modal-icon">✓</div>
+            <h2 class="modal-title">Appointment Booked!</h2>
+            <p id="popup-message" class="modal-message"></p>
+            <div class="modal-summary">
+                <div class="summary-item">
+                    <span class="summary-label">Date:</span>
+                    <span id="summary-date" class="summary-value"></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Time:</span>
+                    <span id="summary-time" class="summary-value"></span>
+                </div>
+            </div>
+            <button id="ok-button" class="modal-button">
+                Done
+            </button>
         </div>
     </div>
 

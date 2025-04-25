@@ -3,72 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resident File Access</title>
+    <title>Resident Document Portal | GreenValley Community</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/res_document.css">
-    <style>
-        #searchBar {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 2px solid #4CAF50;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        #searchBar:focus {
-            outline: none;
-            border-color: #2E7D32;
-            box-shadow: 0 0 5px rgba(46, 125, 50, 0.5);
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Available Forms</h1>
-        <input type="text" id="searchBar" placeholder="Search documents..." onkeyup="filterFiles()">
-        <div id="file-list"></div>
+    <div class="header">
+        <div class="logo-container">
+            <i class="fas fa-file-contract logo-icon"></i>
+            <h1>Ugnay Pinsao</h1>
+        </div>
     </div>
 
-    <script>
-        const fileList = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+    <div class="container">
+        <div class="page-header">
+            <h2><i class="fas fa-folder-open"></i> Resident Document Portal</h2>
+            <p class="subtitle">Access and manage your community documents</p>
+        </div>
 
-        function displayFiles(filteredFiles = fileList) {
-            const fileListContainer = document.getElementById('file-list');
-            fileListContainer.innerHTML = '';
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchBar" placeholder="Search documents by name or title..." onkeyup="filterFiles()">
+                <button class="clear-search" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="filter-options">
+                <select id="sortSelect" onchange="sortFiles()">
+                    <option value="name-asc">Sort by: Name (A-Z)</option>
+                    <option value="name-desc">Sort by: Name (Z-A)</option>
+                    <option value="date-new">Sort by: Newest first</option>
+                    <option value="date-old">Sort by: Oldest first</option>
+                </select>
+            </div>
+        </div>
 
-            if (filteredFiles.length === 0) {
-                fileListContainer.innerHTML = '<p>No files available.</p>';
-            } else {
-                filteredFiles.sort((a, b) => a.name.localeCompare(b.name)); // Sort files alphabetically
-                
-                filteredFiles.forEach((file) => {
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.innerHTML = `
-                        <h3>${file.title || 'Untitled Document'}</h3>
-                        <p>${file.name}</p>
-                        <a href="${file.url}" target="_blank" download>Download</a>
-                        <button onclick="printFile('${file.url}')">Print</button>
-                    `;
-                    fileListContainer.appendChild(fileItem);
-                });
-            }
-        }
+        <div class="file-count">
+            <span id="fileCounter">0 documents</span>
+        </div>
 
-        function filterFiles() {
-            const searchInput = document.getElementById('searchBar').value.toLowerCase();
-            const filteredFiles = fileList.filter(file => file.name.toLowerCase().includes(searchInput) || (file.title && file.title.toLowerCase().includes(searchInput)));
-            displayFiles(filteredFiles);
-        }
+        <div id="file-list" class="file-grid"></div>
 
-        function printFile(url) {
-            const printWindow = window.open(url, '_blank');
-            printWindow.addEventListener('load', () => {
-                printWindow.print();
-            });
-        }
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-folder-open empty-icon"></i>
+            <h3>No Documents Available</h3>
+            <p>There are currently no documents in the system.</p>
+        </div>
+    </div>
 
-        // Display files on page load
-        displayFiles();
-    </script>
+    <script src="../js/res_document.js"></script>
 </body>
 </html>
