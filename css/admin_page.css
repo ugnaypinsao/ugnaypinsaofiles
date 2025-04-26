@@ -1,39 +1,163 @@
+/* Modern Button Grid with Image Background */
+:root {
+    --primary-green: #4caf50;
+    --primary-green-dark: #2e7d32;
+    --primary-green-light: #66bb6a;
+    --primary-green-lighter: #81c784;
+    --white: #ffffff;
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
-    background-color: #e8f5e9;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    position: relative;
+    color: #333;
 }
+
+/* Background image with overlay */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../images/admin.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -2;
+    filter: brightness(0.9);
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(76, 175, 80, 0.15); /* Green tint overlay */
+    z-index: -1;
+}
+
 .main-content {
     text-align: center;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+    backdrop-filter: blur(4px);
+    max-width: 90%;
+    width: 800px;
+    margin: 2rem;
 }
+
+h1 {
+    color: var(--primary-green-dark);
+    margin-bottom: 1.5rem;
+    font-size: 2.2rem;
+}
+
 .button-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
     justify-items: center;
-    margin-top: 20px;
+    margin-top: 30px;
+    padding: 1rem;
 }
+
 .button {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
-    color: white;
-    padding: 15px 25px;
+    background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+    color: var(--white);
+    padding: 20px 25px;
     font-size: 18px;
-    border-radius: 8px;
+    border-radius: 10px;
     text-decoration: none;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    width: 200px;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+    width: 100%;
+    max-width: 220px;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
 }
+
+.button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: var(--transition);
+}
+
 .button:hover {
-    background: linear-gradient(135deg, #66bb6a, #388e3c);
-    transform: translateY(-3px);
+    background: linear-gradient(135deg, var(--primary-green-light), var(--primary-green));
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.button:hover::before {
+    left: 100%;
+}
+
+.button i {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.button-text {
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 2rem 1.5rem;
+        width: 95%;
+    }
+    
+    .button-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    body::before {
+        background-attachment: scroll;
+    }
+}
+
+@media (max-width: 480px) {
+    .button-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .button {
+        max-width: 100%;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
 }
