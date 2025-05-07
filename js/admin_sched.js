@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById('calendar');
     const pendingRequestsEl = document.getElementById('pending-requests');
     const containerEl = document.querySelector('.container');
@@ -29,19 +29,24 @@ document.addEventListener('DOMContentLoaded', function () {
         initialView: 'dayGridMonth',
         events: [],
         eventClick: function(info) {
-            // Get the full booking data from localStorage
             const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
             const booking = bookings.find(b => 
-                b.name === info.event.extendedProps.name && 
-                b.date === info.event.startStr.split('T')[0] && 
-                b.time === info.event.startStr.split('T')[1].substring(0, 5) &&
-                b.status === 'accepted'
+                b.id === info.event.extendedProps.id && 
+                (b.status === 'accepted' || b.status === 'rescheduled')
             );
             
             if (booking) {
-                showBookingDetails(booking);
+                const appointmentDate = new Date(`${booking.date}T${booking.time}`);
+                const currentDate = new Date();
+                
+                if (appointmentDate < currentDate) {
+                    showAlert('Past Appointment', 'This appointment has already passed and cannot be modified.', 'info');
+                    return;
+                }
+                
+                showBookingDetails(booking, info.event);
             } else {
-                console.error('Booking not found');
+                showAlert('Error', 'Booking not found', 'error');
             }
             info.jsEvent.preventDefault();
         }
@@ -59,10 +64,144 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Function to show booking details in a modal
-    function showBookingDetails(booking) {
+    // Alert modal function
+    function showAlert(title, message, type = 'info') {
+        const modal = document.createElement('div');
+        modal.className = 'alert-modal';
+        modal.innerHTML = `
+            <div class="alert-content ${type}">
+                <span class="close-alert">&times;</span>
+                <h2>${title}</h2>
+                <div class="alert-message">${message}</div>
+                <div class="alert-actions">
+                    <button class="confirm-alert">OK</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const closeModal = () => document.body.removeChild(modal);
+        
+        modal.querySelector('.close-alert').addEventListener('click', closeModal);
+        modal.querySelector('.confirm-alert').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    // Confirmation modal function
+    function showConfirm(title, message, confirmCallback, cancelCallback, type = 'info') {
+        const modal = document.createElement('div');
+        modal.className = 'alert-modal';
+        modal.innerHTML = `
+            <div class="alert-content ${type}">
+                <span class="close-alert">&times;</span>
+                <h2>${title}</h2>
+                <div class="alert-message">${message}</div>
+                <div class="alert-actions">
+                    <button class="confirm-btn">Confirm</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const closeModal = () => document.body.removeChild(modal);
+        
+        modal.querySelector('.close-alert').addEventListener('click', () => {
+            if (cancelCallback) cancelCallback();
+            closeModal();
+        });
+        
+        modal.querySelector('.confirm-btn').addEventListener('click', () => {
+            if (confirmCallback) confirmCallback();
+            closeModal();
+        });
+        
+        modal.querySelector('.cancel-btn').addEventListener('click', () => {
+            if (cancelCallback) cancelCallback();
+            closeModal();
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                if (cancelCallback) cancelCallback();
+                closeModal();
+            }
+        });
+    }
+
+    // Prompt modal function
+    function showPrompt(title, message, defaultValue, confirmCallback, cancelCallback) {
+        const modal = document.createElement('div');
+        modal.className = 'alert-modal';
+        modal.innerHTML = `
+            <div class="alert-content">
+                <span class="close-alert">&times;</span>
+                <h2>${title}</h2>
+                <div class="alert-message">${message}</div>
+                <input type="text" class="prompt-input" value="${defaultValue || ''}" placeholder="${message}">
+                <div class="alert-actions">
+                    <button class="confirm-btn">OK</button>
+                    <button class="cancel-btn">Cancel</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const inputField = modal.querySelector('.prompt-input');
+        inputField.focus();
+        inputField.select();
+
+        const closeModal = () => document.body.removeChild(modal);
+        
+        modal.querySelector('.close-alert').addEventListener('click', () => {
+            if (cancelCallback) cancelCallback(null);
+            closeModal();
+        });
+        
+        modal.querySelector('.confirm-btn').addEventListener('click', () => {
+            const value = inputField.value.trim();
+            if (confirmCallback) confirmCallback(value);
+            closeModal();
+        });
+        
+        modal.querySelector('.cancel-btn').addEventListener('click', () => {
+            if (cancelCallback) cancelCallback(null);
+            closeModal();
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                if (cancelCallback) cancelCallback(null);
+                closeModal();
+            }
+        });
+        
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const value = inputField.value.trim();
+                if (confirmCallback) confirmCallback(value);
+                closeModal();
+            }
+        });
+    }
+
+    // Show booking details with past appointment check
+    function showBookingDetails(booking, calendarEvent = null) {
         const modal = document.createElement('div');
         modal.className = 'booking-modal';
+        
+        const showActions = calendarEvent !== null;
+        const appointmentDate = new Date(`${booking.date}T${booking.time}`);
+        const currentDate = new Date();
+        const isPastAppointment = appointmentDate < currentDate;
+        
         modal.innerHTML = `
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
@@ -78,8 +217,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     ${booking.rescheduleReason ? `<p><strong>Reschedule Reason:</strong> ${booking.rescheduleReason}</p>` : ''}
                     ${booking.originalDate ? `<p><strong>Originally Scheduled:</strong> ${booking.originalDate} at ${booking.originalTime}</p>` : ''}
                     <p><strong>Request Sent:</strong> ${new Date(booking.requestDateTime).toLocaleString()}</p>
+                    ${isPastAppointment ? `<p class="past-appointment-warning">This appointment has already passed</p>` : ''}
                 </div>
-                ${booking.status === 'accepted' || booking.status === 'rescheduled' ? `
+                ${showActions && !isPastAppointment && (booking.status === 'accepted' || booking.status === 'rescheduled') ? `
                 <div class="modal-actions">
                     <button class="reschedule-event-btn">Reschedule</button>
                     <button class="cancel-event-btn">${booking.status === 'rescheduled' ? 'Cancel Rescheduled Booking' : 'Cancel Booking'}</button>
@@ -100,20 +240,26 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        if (booking.status === 'accepted' || booking.status === 'rescheduled') {
+        if (showActions && !isPastAppointment && (booking.status === 'accepted' || booking.status === 'rescheduled')) {
             modal.querySelector('.reschedule-event-btn').addEventListener('click', () => {
                 document.body.removeChild(modal);
-                rescheduleBooking(booking);
+                rescheduleBooking(booking, calendarEvent);
             });
 
             modal.querySelector('.cancel-event-btn').addEventListener('click', () => {
                 document.body.removeChild(modal);
-                const reason = prompt('Please enter the reason for cancellation:');
-                if (reason !== null) {
-                    sendGmail(booking.email, 'Booking Cancelled', 
-                        `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been cancelled.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
-                    updateBooking(booking.id, 'cancelled', reason);
-                }
+                showPrompt(
+                    'Cancellation Reason', 
+                    'Please enter the reason for cancellation:', 
+                    '',
+                    (reason) => {
+                        if (reason) {
+                            sendGmail(booking.email, 'Booking Cancelled', 
+                                `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been cancelled.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`);
+                            updateBooking(booking.id, 'cancelled', reason);
+                        }
+                    }
+                );
             });
         }
     }
@@ -203,54 +349,79 @@ document.addEventListener('DOMContentLoaded', function () {
                             `Dear ${booking.name},\n\nYour booking for ${booking.date} at ${booking.time} has been accepted.\n\nLooking forward to seeing you!\n\nBest regards,\n[Your Business Name]`);
                         updateBooking(booking.id, 'accepted');
                     } else {
-                        alert('This time slot is already booked or conflicts with another appointment. Please choose a different time or reschedule.');
+                        showAlert('Time Slot Unavailable', 'This time slot is already booked or conflicts with another appointment. Please choose a different time or reschedule.', 'error');
                     }
                 });
                 
                 bookingEl.querySelector('.reschedule-btn').addEventListener('click', () => {
-                    const newDate = prompt('Enter new date (YYYY-MM-DD):', booking.date);
-                    const newTime = prompt('Enter new time (HH:MM):', booking.time);
-                    const reason = prompt('Please enter the reason for rescheduling:');
-                    
-                    if (newDate && newTime && reason) {
-                        if (!isTimeSlotAvailable(newDate, newTime)) {
-                            alert('This time slot is already booked or conflicts with another appointment. Please choose a different time.');
-                            return;
-                        }
-                        
-                        // Auto-open email for rescheduling
-                        const emailBody = `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nReason: ${reason}\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`;
-                        sendGmail(booking.email, 'Booking Rescheduled', emailBody);
-                        
-                        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-                        const updatedBookings = bookings.map((b) => {
-                            if (b.id === booking.id) {
-                                return { 
-                                    ...b, 
-                                    date: newDate, 
-                                    time: newTime,
-                                    originalDate: b.date,
-                                    originalTime: b.time,
-                                    rescheduleReason: reason,
-                                    status: 'rescheduled'
-                                };
+                    showPrompt(
+                        'Reschedule Date', 
+                        'Enter new date (YYYY-MM-DD):', 
+                        booking.date,
+                        (newDate) => {
+                            if (newDate) {
+                                showPrompt(
+                                    'Reschedule Time', 
+                                    'Enter new time (HH:MM):', 
+                                    booking.time,
+                                    (newTime) => {
+                                        if (newTime) {
+                                            showPrompt(
+                                                'Reschedule Reason', 
+                                                'Please enter the reason for rescheduling:', 
+                                                '',
+                                                (reason) => {
+                                                    if (reason) {
+                                                        if (!isTimeSlotAvailable(newDate, newTime)) {
+                                                            showAlert('Time Slot Unavailable', 'This time slot is already booked or conflicts with another appointment. Please choose a different time.', 'error');
+                                                            return;
+                                                        }
+                                                        
+                                                        const emailBody = `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nReason: ${reason}\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`;
+                                                        sendGmail(booking.email, 'Booking Rescheduled', emailBody);
+                                                        
+                                                        const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                                                        const updatedBookings = bookings.map((b) => {
+                                                            if (b.id === booking.id) {
+                                                                return { 
+                                                                    ...b, 
+                                                                    date: newDate, 
+                                                                    time: newTime,
+                                                                    originalDate: b.date,
+                                                                    originalTime: b.time,
+                                                                    rescheduleReason: reason,
+                                                                    status: 'rescheduled'
+                                                                };
+                                                            }
+                                                            return b;
+                                                        });
+                                                        localStorage.setItem('bookings', JSON.stringify(updatedBookings));
+                                                        loadBookings();
+                                                    }
+                                                }
+                                            );
+                                        }
+                                    }
+                                );
                             }
-                            return b;
-                        });
-                        localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-                        loadBookings();
-                    }
+                        }
+                    );
                 });
                 
                 bookingEl.querySelector('.reject-btn').addEventListener('click', () => {
-                    const reason = prompt('Please enter the reason for rejection:');
-                    if (reason !== null) {
-                        // Auto-open email for rejection
-                        const emailBody = `Dear ${booking.name},\n\nWe regret to inform you that your booking request for ${booking.date} at ${booking.time} has been rejected.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`;
-                        sendGmail(booking.email, 'Booking Rejected', emailBody);
-                        
-                        updateBooking(booking.id, 'rejected', reason);
-                    }
+                    showPrompt(
+                        'Rejection Reason', 
+                        'Please enter the reason for rejection:', 
+                        '',
+                        (reason) => {
+                            if (reason) {
+                                const emailBody = `Dear ${booking.name},\n\nWe regret to inform you that your booking request for ${booking.date} at ${booking.time} has been rejected.\n\nReason: ${reason}\n\nPlease contact us if you have any questions.\n\nBest regards,\n[Your Business Name]`;
+                                sendGmail(booking.email, 'Booking Rejected', emailBody);
+                                
+                                updateBooking(booking.id, 'rejected', reason);
+                            }
+                        }
+                    );
                 });
 
                 pendingRequestsEl.appendChild(bookingEl);
@@ -277,12 +448,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
-            // Only add to calendar if accepted
-            if (booking.status === 'accepted') {
+            // Add to calendar if accepted or rescheduled
+            if (booking.status === 'accepted' || booking.status === 'rescheduled') {
+                const appointmentDate = new Date(`${booking.date}T${booking.time}`);
+                const currentDate = new Date();
+                const isPastAppointment = appointmentDate < currentDate;
+                
                 calendar.addEvent({
-                    title: 'Booked',
+                    id: booking.id.toString(),
+                    title: booking.status === 'rescheduled' ? 'Rescheduled' : 'Booked',
                     start: `${booking.date}T${booking.time}`,
                     extendedProps: {
+                        id: booking.id,
                         name: booking.name,
                         email: booking.email,
                         details: booking.details,
@@ -290,8 +467,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         reason: booking.reason || '',
                         rescheduleReason: booking.rescheduleReason || '',
                         originalDate: booking.originalDate || '',
-                        originalTime: booking.originalTime || ''
-                    }
+                        originalTime: booking.originalTime || '',
+                        isPastAppointment: isPastAppointment
+                    },
+                    color: booking.status === 'rescheduled' ? '#2196F3' : '#5e8d56',
+                    textColor: isPastAppointment ? '#999999' : '#ffffff'
                 });
             }
         });
@@ -357,39 +537,64 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Reschedule booking
-    function rescheduleBooking(booking) {
-        const newDate = prompt('Enter new date (YYYY-MM-DD):', booking.date);
-        const newTime = prompt('Enter new time (HH:MM):', booking.time);
-        const reason = prompt('Please enter the reason for rescheduling:');
-        
-        if (newDate && newTime && reason) {
-            if (!isTimeSlotAvailable(newDate, newTime)) {
-                alert('This time slot is already booked or conflicts with another appointment. Please choose a different time.');
-                return;
-            }
-            
-            // Auto-open email for rescheduling
-            const emailBody = `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nReason: ${reason}\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`;
-            sendGmail(booking.email, 'Booking Rescheduled', emailBody);
-            
-            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
-            const updatedBookings = bookings.map((b) => {
-                if (b.id === booking.id) {
-                    return { 
-                        ...b, 
-                        date: newDate, 
-                        time: newTime,
-                        originalDate: b.originalDate || b.date,
-                        originalTime: b.originalTime || b.time,
-                        rescheduleReason: reason,
-                        status: 'rescheduled'
-                    };
+    function rescheduleBooking(booking, calendarEvent = null) {
+        showPrompt(
+            'Reschedule Date', 
+            'Enter new date (YYYY-MM-DD):', 
+            booking.date,
+            (newDate) => {
+                if (newDate) {
+                    showPrompt(
+                        'Reschedule Time', 
+                        'Enter new time (HH:MM):', 
+                        booking.time,
+                        (newTime) => {
+                            if (newTime) {
+                                showPrompt(
+                                    'Reschedule Reason', 
+                                    'Please enter the reason for rescheduling:', 
+                                    '',
+                                    (reason) => {
+                                        if (reason) {
+                                            if (!isTimeSlotAvailable(newDate, newTime)) {
+                                                showAlert('Time Slot Unavailable', 'This time slot is already booked or conflicts with another appointment. Please choose a different time.', 'error');
+                                                return;
+                                            }
+                                            
+                                            const emailBody = `Dear ${booking.name},\n\nYour booking has been rescheduled to ${newDate} at ${newTime}.\n\nReason: ${reason}\n\nPlease let us know if this works for you.\n\nBest regards,\n[Your Business Name]`;
+                                            sendGmail(booking.email, 'Booking Rescheduled', emailBody);
+                                            
+                                            const bookings = JSON.parse(localStorage.getItem('bookings')) || [];
+                                            const updatedBookings = bookings.map((b) => {
+                                                if (b.id === booking.id) {
+                                                    return { 
+                                                        ...b, 
+                                                        date: newDate, 
+                                                        time: newTime,
+                                                        originalDate: b.originalDate || b.date,
+                                                        originalTime: b.originalTime || b.time,
+                                                        rescheduleReason: reason,
+                                                        status: 'rescheduled'
+                                                    };
+                                                }
+                                                return b;
+                                            });
+                                            localStorage.setItem('bookings', JSON.stringify(updatedBookings));
+                                            
+                                            if (calendarEvent) {
+                                                calendarEvent.remove();
+                                            }
+                                            
+                                            loadBookings();
+                                        }
+                                    }
+                                );
+                            }
+                        }
+                    );
                 }
-                return b;
-            });
-            localStorage.setItem('bookings', JSON.stringify(updatedBookings));
-            loadBookings();
-        }
+            }
+        );
     }
 
     loadBookings();
