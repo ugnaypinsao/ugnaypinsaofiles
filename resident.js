@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // DOM Elements
     const documentsList = document.getElementById('documentsList');
     const searchInput = document.getElementById('searchInput');
-    const adminLoginBtn = document.getElementById('adminLoginBtn');
     
     // Render documents
     function renderDocuments(docs = documents) {
@@ -138,18 +137,6 @@ document.addEventListener('DOMContentLoaded', function() {
             (doc.description && doc.description.toLowerCase().includes(searchTerm))
         );
         renderDocuments(filteredDocs);
-    });
-    
-    // Admin login
-    adminLoginBtn.addEventListener('click', function() {
-        // In a real app, this would show a login form
-        // For demo, we'll just redirect with a password prompt
-        const password = prompt('Enter admin password:');
-        if (password === 'admin123') { // Demo password
-            window.location.href = 'admin.html';
-        } else {
-            alert('Incorrect password');
-        }
     });
     
     // Initial render

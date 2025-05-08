@@ -19,9 +19,6 @@ body {
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     padding: 20px 0;
     border-bottom: 1px solid #ddd;
     margin-bottom: 30px;
@@ -29,20 +26,6 @@ header {
 
 header h1 {
     color: #2c3e50;
-}
-
-nav button {
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-nav button:hover {
-    background-color: #c0392b;
 }
 
 /* Form Styles */

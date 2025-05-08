@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const uploadForm = document.getElementById('uploadForm');
     const documentsList = document.getElementById('documentsList');
     const searchInput = document.getElementById('searchInput');
-    const logoutBtn = document.getElementById('logoutBtn');
     
     // Render documents
     function renderDocuments(docs = documents) {
@@ -114,13 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
             (doc.description && doc.description.toLowerCase().includes(searchTerm))
         );
         renderDocuments(filteredDocs);
-    });
-    
-    // Logout
-    logoutBtn.addEventListener('click', function() {
-        // In a real app, you would clear the session/token
-        alert('Logged out successfully');
-        window.location.href = 'resident.html'; // Redirect to resident view
     });
     
     // Initial render
