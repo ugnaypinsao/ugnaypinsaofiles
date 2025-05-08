@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Document Posting System</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Document Posting System - Admin</h1>
+            <nav>
+                <button id="logoutBtn">Logout</button>
+            </nav>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <h2>Upload New Document</h2>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label for="docTitle">Document Title:</label>
+                        <input type="text" id="docTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="docDescription">Description:</label>
+                        <textarea id="docDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="docFile">Select File (PDF or DOC):</label>
+                        <input type="file" id="docFile" accept=".pdf,.doc,.docx" required>
+                    </div>
+                    <button type="submit">Upload Document</button>
+                </form>
+            </section>
+
+            <section class="documents-section">
+                <h2>Posted Documents</h2>
+                <div class="filter-controls">
+                    <input type="text" id="searchInput" placeholder="Search documents...">
+                </div>
+                <div class="documents-list" id="documentsList">
+                    <!-- Documents will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
