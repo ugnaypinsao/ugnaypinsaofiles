@@ -1,0 +1,627 @@
+/* General Body Styles */
+body {
+    font-family: 'Roboto', sans-serif; 
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fb; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333; 
+}
+
+/* Inbox Container */
+.inbox-container {
+    width: 100%;
+    max-width: 450px; 
+    height: 650px;
+    background: #ffffff; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    display: flex;
+    flex-direction: column;
+}
+
+/* Inbox Header */
+.inbox-header {
+    background: #6c7c88; 
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px 12px 0 0; 
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Message List */
+.message-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background-color: #fafafa; 
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.message-item {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    position: relative;
+}
+
+.message-item:hover {
+    background: #f0f0f0; 
+}
+
+.message-item span {
+    display: block;
+    font-weight: 600;
+    color: #4a4a4a; 
+}
+
+.message-item p {
+    color: #666; 
+    font-size: 0.95rem;
+    margin: 5px 0;
+}
+
+/* Message Detail */
+.message-detail {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9; 
+    display: none; 
+    overflow-y: auto;
+}
+
+.message-detail h3 {
+    margin: 0 0 10px;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+.message-detail p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    white-space: pre-wrap;
+}
+
+/* Unread message style */
+.message-item.unread {
+    font-weight: bold;
+    background-color: #e3f2fd;
+}
+
+/* Unread mark (dot) */
+.unread-mark {
+    color: #ff0000;
+    font-size: 1.2rem;
+    margin-left: 10px;
+}
+
+/* Timestamp styling */
+small {
+    display: block;
+    color: #777;
+    font-size: 0.8rem;
+    margin-top: 5px;
+}
+
+/* Detail view buttons */
+.detail-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.detail-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex: 1;
+    min-width: 120px;
+}
+
+.detail-buttons button:first-child {
+    background-color: #6c7c88;
+    color: #ffffff;
+}
+
+.detail-buttons .reply-button {
+    background-color: #4285F4;
+    color: #ffffff;
+}
+
+.detail-buttons .delete-button {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+.detail-buttons button:hover {
+    transform: scale(1.05);
+}
+
+.detail-buttons button:active {
+    transform: scale(0.98);
+}
+
+/* Message info styling */
+.message-item .message-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.message-item .message-info span {
+    font-weight: 600;
+    color: #4a4a4a;
+}
+
+.message-item .message-info .message-date {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+/* Empty state */
+.empty-inbox {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+}
+
+/* Status buttons */
+.status-buttons {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.status-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.status-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+}
+
+.status-btn.unresolved {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.status-btn.in-progress {
+    background-color: #fff8e1;
+    color: #f57f17;
+}
+
+.status-btn.resolved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Message status display */
+.message-status {
+    margin: 15px 0;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.message-status.unresolved {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #c62828;
+}
+
+.message-status.in-progress {
+    background-color: #fff8e1;
+    color: #f57f17;
+    border-left: 4px solid #f57f17;
+}
+
+.message-status.resolved {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #2e7d32;
+}
+
+/* Status highlights */
+.message-item.unresolved {
+    border-left: 4px solid #c62828;
+}
+
+.message-item.in-progress {
+    border-left: 4px solid #f57f17;
+}
+
+.message-item.resolved {
+    border-left: 4px solid #2e7d32;
+}
+
+/* Filter controls */
+.filter-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.filter-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.filter-btn.active {
+    background-color: #6c7c88;
+    color: white;
+}
+
+/* Adjust inbox header for filter controls */
+.inbox-header {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.inbox-header > div:first-child {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Filter options */
+.filter-options {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background-color: #e0e0e0;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.filter-btn.active {
+    background-color: #6c7c88;
+    color: white;
+}
+
+/* Inbox header adjustments */
+.inbox-header > div:first-child {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.message-content {
+    flex: 1;
+    cursor: pointer;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close-btn:hover {
+    color: #333;
+  }
+  
+  .archive-list {
+    margin-top: 20px;
+  }
+  
+  .archive-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .archive-item-content {
+    flex: 1;
+  }
+  
+  .archive-item-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .restore-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .delete-permanently-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Adjust inbox header for new button */
+  .inbox-header > div:first-child {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+  }
+
+/* Add these new styles */
+.archive-container {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.archive-link, .back-link {
+    padding: 8px 16px;
+    background-color: #6c7c88;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.archive-link:hover, .back-link:hover {
+    background-color: #5a6873;
+}
+
+/* Delete modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.confirm-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+#deleteReason {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+/* Archive Styles */
+.archive-container {
+    width: 90%;
+    max-width: 800px;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.archive-list {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 10px;
+}
+
+.archive-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.archive-item-content span {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.archive-item-content p {
+    margin: 8px 0;
+    color: #555;
+}
+
+.archive-item-content small {
+    display: block;
+    color: #777;
+    font-size: 0.8rem;
+    margin: 4px 0;
+}
+
+.empty-archive {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888;
+}
+
+.back-link {
+    padding: 8px 16px;
+    background-color: #6c7c88;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    background-color: #5a6873;
+}
+
+/* Scrollbar styling */
+.archive-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.archive-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.archive-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.archive-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* New Messages Popup Styles */
+#newMessagesPopup .modal-content {
+    background-color: #31620e;
+    color: white;
+    padding: 25px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 350px;
+}
+
+#newMessagesPopup h3 {
+    margin-top: 0;
+    color: white;
+}
+
+#newMessagesCount {
+    font-size: 18px;
+    margin: 20px 0;
+}
+
+#popupOkButton {
+    background-color: white;
+    color: #31620e;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#popupOkButton:hover {
+    background-color: #f0f0f0;
+}

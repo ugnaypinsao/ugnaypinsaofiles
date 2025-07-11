@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Inbox</title>
+  <link rel="stylesheet" href="../css/admin_mes.css">
+</head>
+
+<body>
+  <div class="inbox-container">
+    <div class="inbox-header">Admin Inbox</div>
+    <div class="message-list" id="messageList">
+      <!-- Messages will be dynamically added here -->
+    </div>
+    <div class="message-detail" id="messageDetail">
+      <h3 id="messageSender"></h3>
+      <p id="messageTimestamp"></p>
+      <p id="messageText"></p>
+      <button onclick="closeDetail()">Back to Inbox</button>
+    </div>
+    <div class="inbox-footer">
+      <button onclick="clearMessages()">Clear Messages</button>
+    </div>
+  </div>
+  <script src="../js/admin_mes.js"></script>
+</body>
+
+</html>

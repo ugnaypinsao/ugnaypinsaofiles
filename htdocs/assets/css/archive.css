@@ -1,0 +1,165 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    line-height: 1.6;
+}
+.archive-header a{
+    text-decoration: none;
+}
+/* Archive Container */
+.archive-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+.archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.archive-header h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.back-link:hover {
+    background-color: #2980b9;
+    transform: translateY(-1px);
+}
+
+/* Archive List */
+.archive-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+/* Empty Archive */
+.empty-archive {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* Archive Items */
+.archive-item {
+    background-color: #f9f9f9;
+    border-left: 4px solid #3498db;
+    border-radius: 4px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.archive-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.archive-item-content {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.archive-item-content span {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.archive-item-content p {
+    margin: 0.5rem 0;
+    color: #34495e;
+}
+
+.archive-item-content small {
+    display: block;
+    color: #7f8c8d;
+    font-size: 0.85rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .archive-container {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .archive-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
+
+/* Add these new styles to your existing archive.css */
+
+/* Search Bar Styles */
+.search-container {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.search-bar {
+    width: 93%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.search-bar:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7f8c8d;
+}
+
+/* No Results Message */
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: #e74c3c;
+    font-size: 1.1rem;
+    display: none;
+}
+
+.no-results i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+}

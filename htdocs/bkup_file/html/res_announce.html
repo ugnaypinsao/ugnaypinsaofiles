@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements | Pinsao Proper</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/res_announce.css">
+    <style>
+        /* Grid system for footer */
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        .grid-pad {
+            padding: 20px 15px 0 15px;
+        }
+        .col-1-2 {
+            width: 50%;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        @media (max-width: 768px) {
+            .col-1-2 {
+                width: 100%;
+            }
+        }
+        
+        /* Image modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* Search bar styles */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .search-bar {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        .search-bar button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .search-bar button:hover {
+            background-color: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-bullhorn"></i>
+                <span>Pinsao Proper</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-wrapper">
+        <div class="page-header">
+            <h1><i class="fas fa-bullhorn"></i> Announcements</h1>
+        </div>
+        
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" placeholder="Search announcements...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <div class="announcements-container">
+            <div id="viewerAnnouncements">
+                <!-- Sample announcement (will be replaced by dynamic content) -->
+                <div class="announcement">
+                    <h3>Sample Announcement Title</h3>
+                    <div class="image-container">
+                        <img src="https://via.placeholder.com/800x500" alt="Announcement" class="announcement-image">
+                    </div>
+                    <div class="announcement-details">
+                        <p><strong>Date:</strong> June 15, 2024</p>
+                        <p><strong>Author:</strong> Barangay Office</p>
+                    </div>
+                    <div class="announcement-content">
+                        This is a sample announcement content. When you click on the image above, it will expand to full screen for better viewing.
+                    </div>
+                    <div class="announcement-date">
+                        <i class="far fa-calendar-alt"></i> Posted on: June 15, 2024
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="wrap">
+        <div class="grid grid-pad">
+            <div class="col-1-2">
+                <div class="content">
+                    <div class="footer-widget">
+                        <h3>About</h3>
+                        <div class="textwidget">
+                            <p>This website is designed to highlight the barangay officials, showcase the vision,
+                                mission, and core values of Pinsao Proper, and serve as a platform for its residents.
+                            </p><br>
+                            <p>&copy; 2024 Pinsao Proper. All rights reserved.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1-2">
+                <div class="content">
+                    <div class="footer-widget">
+                        <h3>More info</h3>
+                        <div class="textwidget">
+                            <p>Pinsao Proper, Baguio City, Benguet, Cordillera Administrative Region (CAR), Philippines.
+                            </p>
+                            <br>
+                            <p>ZIP CODE: 2600</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- End Footer -->
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="expandedImg">
+    </div>
+
+    <script src="../js/res_announce.js"></script>
+    <script>
+        // Image modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get the modal
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("expandedImg");
+            var closeBtn = document.getElementsByClassName("close")[0];
+            
+            // When any image in announcements is clicked
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('announcement-image')) {
+                    modal.style.display = "block";
+                    modalImg.src = e.target.src;
+                    document.body.style.overflow = "hidden"; // Prevent scrolling when modal is open
+                }
+            });
+            
+            // When the user clicks on (x), close the modal
+            closeBtn.onclick = function() { 
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Re-enable scrolling
+            }
+            
+            // When the user clicks anywhere outside the image, close the modal
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                    document.body.style.overflow = "auto"; // Re-enable scrolling
+                }
+            }
+            
+            // Search functionality would be implemented here
+            const searchInput = document.querySelector('.search-bar input');
+            const searchButton = document.querySelector('.search-bar button');
+            
+            searchButton.addEventListener('click', function() {
+                // Search functionality would go here
+                console.log('Searching for:', searchInput.value);
+                // In a real implementation, this would filter announcements
+            });
+            
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    // Search functionality would go here
+                    console.log('Searching for:', searchInput.value);
+                    // In a real implementation, this would filter announcements
+                }
+            });
+        });
+    </script>
+</body>
+</html>

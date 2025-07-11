@@ -1,0 +1,27 @@
+$action = "delete";
+$tableName = "messages";
+$recordId = $id;
+
+$db -> logActionVerbose(
+    userId: $_SESSION['user_id'],
+    userName: 'Admin',
+    action: $action,
+    tableName: 'messages',
+    recordId: $recordId,
+    reason: $reason,
+    description: null
+);
+
+
+
+$db -> logActionVerbose(
+    userId: $_SESSION['user_id'],
+    userName: 'Admin',
+    action: 'update',
+    tableName: 'appointments',
+    recordId: null,
+    reason: null,
+    description: $email.' appointment to '.$status.'.'
+);
+
+

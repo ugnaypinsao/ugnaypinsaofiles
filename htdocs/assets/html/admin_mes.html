@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Inbox</title>
+  <link rel="stylesheet" href="../css/admin_mes.css">
+</head>
+
+<body>
+  <div class="inbox-container">
+    <div class="inbox-header">
+      <div>Admin Inbox</div>
+      <div class="filter-options">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="unread">Unread</button>
+        <button class="filter-btn" data-filter="unresolved">Unresolved</button>
+        <button class="filter-btn" data-filter="in-progress">In Progress</button>
+        <button class="filter-btn" data-filter="resolved">Resolved</button>
+      </div>
+    </div>
+    <div class="message-list" id="messageList">
+      <!-- Messages will be dynamically added here -->
+    </div>
+    <div class="message-detail" id="messageDetail">
+      <h3 id="messageSender"></h3>
+      <p id="messageText"></p>
+      <small id="messageTimestamp"></small>
+      <div class="message-status" id="messageStatus"></div>
+      <div class="detail-buttons">
+        <button onclick="closeDetail()">Back to Inbox</button>
+        <button onclick="replyViaEmail()" class="reply-button">Reply via Email</button>
+        <button onclick="showDeleteDialog()" class="delete-button">Delete Message</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Confirmation Dialog -->
+  <div class="modal" id="deleteModal">
+    <div class="modal-content">
+      <h3>Delete Message</h3>
+      <p>Please provide a reason for deleting this message:</p>
+      <textarea id="deleteReason" placeholder="Enter reason for deletion..." rows="4"></textarea>
+      <div class="modal-buttons">
+        <button onclick="confirmDelete()" class="confirm-btn">Confirm Delete</button>
+        <button onclick="cancelDelete()" class="cancel-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Messages Popup -->
+  <div id="newMessagesPopup" class="modal">
+    <div class="modal-content">
+        <h3>New Messages</h3>
+        <p id="newMessagesCount"></p>
+        <button id="popupOkButton">OK</button>
+    </div>
+  </div>
+
+  <script src="../js/admin_mes.js"></script>
+</body>
+
+</html>

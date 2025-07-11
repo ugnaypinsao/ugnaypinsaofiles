@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin File and Image Upload</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/admin_document.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1><i class="fas fa-cloud-upload-alt"></i> Pinsao Proper Library</h1>
+        </header>
+
+        <main class="admin-content">
+            <div class="upload-section card">
+                <h2><i class="fas fa-upload"></i> Upload New File</h2>
+                <form id="file-upload-form" class="upload-form">
+                    <div class="form-group">
+                        <label for="title">Document Title</label>
+                        <input type="text" id="title" placeholder="Enter a descriptive title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="file">Select File</label>
+                        <div class="file-upload-wrapper">
+                            <label for="file" class="file-upload-label">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span class="file-upload-text">Choose a file or drag it here</span>
+                                <span class="file-types">(JPG, PNG, PDF, DOC, DOCX)</span>
+                            </label>
+                            <input type="file" id="file" accept="image/*,.pdf,.doc,.docx" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-upload"></i> Upload File
+                    </button>
+                </form>
+            </div>
+
+            <div class="media-library card">
+                <div class="library-header">
+                    <h2><i class="fas fa-photo-video"></i> Media Library</h2>
+                    <div class="search-filter">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search files..." id="adminSearch">
+                        </div>
+                        <select class="filter-select" id="adminFilter">
+                            <option value="all">All Files</option>
+                            <option value="image">Images</option>
+                            <option value="document">Documents</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="file-list" class="file-grid"></div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Get files from localStorage or initialize empty array
+        let fileList = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+        
+        // Display files on page load
+        displayFiles(fileList);
+        
+        // Set up event listeners for search and filter
+        document.getElementById('adminSearch').addEventListener('input', filterAdminFiles);
+        document.getElementById('adminFilter').addEventListener('change', filterAdminFiles);
+
+        function displayFiles(files = []) {
+            const fileListContainer = document.getElementById('file-list');
+            fileListContainer.innerHTML = '';
+
+            if (files.length === 0) {
+                fileListContainer.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-folder-open"></i>
+                        <p>No files uploaded yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            files.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                
+                if (file.type.startsWith('image/')) {
+                    fileItem.innerHTML = `
+                        <div class="file-preview">
+                            <img src="${file.url}" alt="${file.name}">
+                            <div class="file-actions">
+                                <button class="btn-icon" onclick="downloadFile('${file.url}', '${file.name}')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon danger" onclick="deleteFile(${index})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="file-info">
+                            <h3>${file.title}</h3>
+                            <p class="file-meta">
+                                <span class="file-type">Image</span>
+                                <span class="file-date">${new Date(file.uploadDate || Date.now()).toLocaleDateString()}</span>
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    const fileIcon = getFileIcon(file.name);
+                    fileItem.innerHTML = `
+                        <div class="file-preview document">
+                            <i class="fas ${fileIcon}"></i>
+                            <div class="file-actions">
+                                <button class="btn-icon" onclick="downloadFile('${file.url}', '${file.name}')" title="Download">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                                <button class="btn-icon danger" onclick="deleteFile(${index})" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="file-info">
+                            <h3>${file.title}</h3>
+                            <p class="file-meta">
+                                <span class="file-type">${file.type.split('/')[1] || 'Document'}</span>
+                                <span class="file-date">${new Date(file.uploadDate || Date.now()).toLocaleDateString()}</span>
+                            </p>
+                        </div>
+                    `;
+                }
+                fileListContainer.appendChild(fileItem);
+            });
+        }
+
+        function getFileIcon(filename) {
+            const extension = filename.split('.').pop().toLowerCase();
+            switch(extension) {
+                case 'pdf': return 'fa-file-pdf';
+                case 'doc':
+                case 'docx': return 'fa-file-word';
+                default: return 'fa-file';
+            }
+        }
+
+        function downloadFile(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        document.getElementById('file-upload-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('file');
+            const titleInput = document.getElementById('title');
+            const file = fileInput.files[0];
+            const title = titleInput.value.trim();
+
+            if (file && title) {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+                submitBtn.disabled = true;
+
+                // Simulate upload delay
+                setTimeout(() => {
+                    const fileURL = URL.createObjectURL(file);
+                    const newFile = { 
+                        name: file.name, 
+                        url: fileURL, 
+                        type: file.type, 
+                        title: title,
+                        size: formatFileSize(file.size),
+                        uploadDate: new Date().toISOString()
+                    };
+                    
+                    // Add to file list
+                    fileList.push(newFile);
+                    saveFilesToStorage();
+                    
+                    // Reset form
+                    fileInput.value = '';
+                    titleInput.value = '';
+                    submitBtn.innerHTML = '<i class="fas fa-upload"></i> Upload File';
+                    submitBtn.disabled = false;
+                    
+                    // Show success notification
+                    showNotification('File uploaded successfully!', 'success');
+                    
+                    // Update display
+                    displayFiles(fileList);
+                    
+                    // Trigger storage event to update resident view
+                    triggerStorageEvent();
+                }, 1500);
+            } else {
+                showNotification('Please enter a title and select a file to upload.', 'error');
+            }
+        });
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        function deleteFile(index) {
+            if (confirm('Are you sure you want to delete this file?')) {
+                fileList.splice(index, 1);
+                saveFilesToStorage();
+                showNotification('File deleted successfully!', 'success');
+                displayFiles(fileList);
+                triggerStorageEvent();
+            }
+        }
+
+        function saveFilesToStorage() {
+            localStorage.setItem('uploadedFiles', JSON.stringify(fileList));
+        }
+
+        function triggerStorageEvent() {
+            // This event will be caught by the resident view
+            window.dispatchEvent(new Event('storage'));
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }, 100);
+        }
+
+        function filterAdminFiles() {
+            const searchTerm = document.getElementById('adminSearch').value.toLowerCase();
+            const filterValue = document.getElementById('adminFilter').value;
+            
+            let filteredFiles = fileList.filter(file => {
+                const matchesSearch = file.title.toLowerCase().includes(searchTerm) || 
+                                    file.name.toLowerCase().includes(searchTerm);
+                
+                const matchesFilter = filterValue === 'all' || 
+                                     (filterValue === 'image' && file.type.startsWith('image/')) ||
+                                     (filterValue === 'document' && !file.type.startsWith('image/'));
+                
+                return matchesSearch && matchesFilter;
+            });
+            
+            displayFiles(filteredFiles);
+        }
+
+        // Drag and drop functionality
+        const fileUploadLabel = document.querySelector('.file-upload-label');
+        const fileInput = document.getElementById('file');
+
+        fileUploadLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadLabel.classList.add('dragover');
+        });
+
+        fileUploadLabel.addEventListener('dragleave', () => {
+            fileUploadLabel.classList.remove('dragover');
+        });
+
+        fileUploadLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadLabel.classList.remove('dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                const fileName = e.dataTransfer.files[0].name;
+                fileUploadLabel.querySelector('.file-upload-text').textContent = fileName;
+                fileUploadLabel.querySelector('.file-types').textContent = formatFileSize(e.dataTransfer.files[0].size);
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length) {
+                const fileName = fileInput.files[0].name;
+                fileUploadLabel.querySelector('.file-upload-text').textContent = fileName;
+                fileUploadLabel.querySelector('.file-types').textContent = formatFileSize(fileInput.files[0].size);
+            }
+        });
+    </script>
+</body>
+</html>
